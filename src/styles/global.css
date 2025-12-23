@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+/* Exposure Font Family */
+@font-face {
+	font-family: 'Exposure[-40]:Regular';
+	src: url('/fonts/205TF-Exposure-[-40].woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Exposure[-20]:Regular';
+	src: url('/fonts/205TF-Exposure-[-20].woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Exposure[-10]:Regular';
+	src: url('/fonts/205TF-Exposure-[-10].woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}

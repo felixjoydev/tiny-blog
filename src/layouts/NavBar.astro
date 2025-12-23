@@ -1,0 +1,12 @@
+---
+import NavActions from "../components/islands/NavActions.jsx";
+import logo from "../assets/icons/tiny-logo.svg";
+---
+
+<nav class="flex items-center justify-between px-[70px] py-4 bg-[#FFFAEF]">
+  <a href="/" class="flex items-center">
+    <img src={logo.src} alt="Tiny Blog" class="h-[55px] w-[50px]" />
+  </a>
+
+  <NavActions client:load />
+</nav>
