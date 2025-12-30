@@ -72,7 +72,10 @@ export default function AuthForm() {
 			}
 
 			if (data.session) {
-				window.location.href = '/accounts/setup';
+				// Small delay to ensure session cookies are set
+				setTimeout(() => {
+					window.location.href = '/accounts/setup';
+				}, 100);
 			}
 		} catch (err) {
 			console.error('Login error:', err);
@@ -106,7 +109,10 @@ export default function AuthForm() {
 			}
 
 			if (data.session) {
-				window.location.href = '/accounts/setup';
+				// Small delay to ensure session cookies are set
+				setTimeout(() => {
+					window.location.href = '/accounts/setup';
+				}, 100);
 			}
 		} catch (err) {
 			console.error('Signup error:', err);
