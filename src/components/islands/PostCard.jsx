@@ -1,7 +1,9 @@
 /**
  * PostCard - Display post preview with title, content snippet, and metadata
  * @param {Object} props
- * @param {string} props.postId - Post ID
+ * @param {string} props.postId - Post ID (fallback for URL)
+ * @param {string} props.authorHandle - Author's handle
+ * @param {string} props.slug - Post slug (preferred for URL)
  * @param {string} props.title - Post title
  * @param {string} props.subtitle - Post subtitle (optional)
  * @param {string} props.content - Post content (will be truncated)
@@ -10,6 +12,8 @@
  */
 export default function PostCard({ 
   postId, 
+  authorHandle,
+  slug,
   title, 
   subtitle, 
   content, 
@@ -49,7 +53,13 @@ export default function PostCard({
     // Save current scroll position before navigating
     sessionStorage.setItem('scrollPosition', window.scrollY.toString());
     sessionStorage.setItem('scrollTimestamp', Date.now().toString());
-    window.location.href = `/post/${postId}`;
+    
+    // Prefer canonical slug URL, fallback to UUID route
+    const url = (authorHandle && slug) 
+      ? `/u/${authorHandle}/${slug}`
+      : `/post/${postId}`;
+    
+    window.location.href = url;
   };
 
   return (

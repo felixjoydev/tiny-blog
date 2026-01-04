@@ -1,26 +1,33 @@
 import { supabase } from "./supabaseClient";
 
 /**
- * Create a new post
+ * Create a new post with slug generation
  * @param {string} title - Post title
  * @param {string} subtitle - Post subtitle (optional)
  * @param {string} content - Post content
  * @param {string} authorId - Author's user ID
+ * @param {string} slug - URL-friendly slug
  * @returns {Promise<{data: object | null, error: object | null}>}
  */
-export const createPost = async (title, subtitle, content, authorId) => {
+export const createPost = async (title, subtitle, content, authorId, slug) => {
   const { data, error } = await supabase
-    .from("posts")
-    .insert({
-      title,
-      subtitle: subtitle || null,
-      content,
-      author_id: authorId,
-    })
-    .select("id")
-    .single();
+    .rpc('create_post_with_slug', {
+      p_title: title,
+      p_subtitle: subtitle || null,
+      p_content: content,
+      p_slug: slug
+    });
 
-  return { data, error };
+  if (error) {
+    return { data: null, error };
+  }
+
+  // RPC returns JSON with { data: { id, slug }, error }
+  if (data?.error) {
+    return { data: null, error: { message: data.error } };
+  }
+
+  return { data: data?.data, error: null };
 };
 
 /**
@@ -47,7 +54,56 @@ export const getPostById = async (id) => {
 };
 
 /**
- * Update a post
+ * Update a post's title and slug using RPC (creates alias for old slug)
+ * @param {string} id - Post ID
+ * @param {string} title - New title
+ * @param {string} slug - New slug
+ * @returns {Promise<{data: object | null, error: object | null}>}
+ */
+export const updatePostWithSlug = async (id, title, slug) => {
+  const { data, error } = await supabase
+    .rpc('update_post_with_slug', {
+      p_post_id: id,
+      p_title: title,
+      p_new_slug: slug
+    });
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  // RPC returns JSON with { data: { slug }, error }
+  if (data?.error) {
+    return { data: null, error: { message: data.error } };
+  }
+
+  return { data: data?.data, error: null };
+};
+
+/**
+ * Update a post (subtitle and content only - title/slug handled by RPC)
+ * @param {string} id - Post ID
+ * @param {string} subtitle - New subtitle (optional)
+ * @param {string} content - New content
+ * @returns {Promise<{data: object | null, error: object | null}>}
+ */
+export const updatePostContent = async (id, subtitle, content) => {
+  const { data, error } = await supabase
+    .from("posts")
+    .update({
+      subtitle: subtitle || null,
+      content,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  return { data, error };
+};
+
+/**
+ * Update a post (legacy function - kept for backward compatibility)
  * @param {string} id - Post ID
  * @param {string} title - New title
  * @param {string} subtitle - New subtitle (optional)

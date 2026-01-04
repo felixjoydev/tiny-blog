@@ -30,6 +30,7 @@ const postData = post as {
   content: string;
   author_id: string;
   created_at: string;
+  slug?: string;
   profiles?: {
     id: string;
     display_name: string;
@@ -37,6 +38,12 @@ const postData = post as {
     avatar_path?: string;
   };
 };
+
+// Redirect to canonical URL if handle and slug are available
+// 302 redirect because the slug can change (not permanent)
+if (postData.profiles?.handle && postData.slug) {
+  return Astro.redirect(`/u/${postData.profiles.handle}/${postData.slug}`, 302);
+}
 
 // Get author profile URL
 const authorProfileUrl = postData.profiles?.handle

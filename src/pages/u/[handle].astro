@@ -21,7 +21,27 @@ const { data: profile, error } = await supabase
   .single();
 
 if (error || !profile) {
-  // Handle not found - return 404
+  // Not found - check if it's an old handle alias
+  const { data: alias, error: aliasError } = await supabase
+    .from("profile_handle_aliases")
+    .select("profile_id")
+    .eq("old_handle", handle.toLowerCase())
+    .maybeSingle();
+
+  if (alias && !aliasError) {
+    // Alias found - fetch current handle and redirect (301 permanent)
+    const { data: currentProfile, error: currentProfileError } = await supabase
+      .from("profiles")
+      .select("handle")
+      .eq("id", alias.profile_id)
+      .single();
+
+    if (currentProfile && !currentProfileError && currentProfile.handle) {
+      return Astro.redirect(`/u/${currentProfile.handle}`, 301);
+    }
+  }
+
+  // No profile or alias found - return 404
   return new Response(null, {
     status: 404,
     statusText: "Profile not found",

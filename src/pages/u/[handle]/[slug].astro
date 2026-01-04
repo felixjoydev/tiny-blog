@@ -1,0 +1,219 @@
+---
+import { createSupabaseServerClient } from "../../../lib/supabaseServer";
+import PostDetail from "../../../components/islands/PostDetail";
+import PostActionBar from "../../../components/islands/PostActionBar";
+import CommentsSection from "../../../components/comment/CommentsSection";
+import EditorLayout from "../../../layouts/EditorLayout.astro";
+
+export const prerender = false;
+
+const { handle, slug } = Astro.params;
+
+if (!handle || !slug) {
+  return Astro.redirect("/404", 404);
+}
+
+const supabase = createSupabaseServerClient(Astro.cookies);
+
+// Step 1: Resolve handle to profile UUID
+const { data: profile, error: profileError } = await supabase
+  .from("profiles")
+  .select("id, handle")
+  .eq("handle", handle)
+  .maybeSingle();
+
+if (profileError || !profile) {
+  // Not found - check if it's an old handle alias
+  const { data: alias, error: aliasError } = await supabase
+    .from("profile_handle_aliases")
+    .select("profile_id")
+    .eq("old_handle", handle)
+    .maybeSingle();
+
+  if (alias && !aliasError) {
+    // Alias found - fetch current handle and redirect (301 permanent)
+    const { data: currentProfile, error: currentProfileError } = await supabase
+      .from("profiles")
+      .select("handle")
+      .eq("id", alias.profile_id)
+      .single();
+
+    if (currentProfile && !currentProfileError && currentProfile.handle) {
+      return Astro.redirect(`/u/${currentProfile.handle}/${slug}`, 301);
+    }
+  }
+
+  return Astro.redirect("/404", 404);
+}
+
+// Step 2: Try to find post by current slug
+const { data: post, error: postError } = await supabase
+  .from("posts")
+  .select(
+    `
+    id,
+    author_id,
+    title,
+    subtitle,
+    content,
+    cover_image_path,
+    created_at,
+    updated_at,
+    slug,
+    author:profiles!author_id (
+      id,
+      display_name,
+      avatar_path,
+      handle
+    )
+  `
+  )
+  .eq("author_id", profile.id)
+  .eq("slug", slug)
+  .maybeSingle();
+
+// Step 3: If not found, check aliases
+if (!post || postError) {
+  const { data: alias, error: aliasError } = await supabase
+    .from("post_slug_aliases")
+    .select("post_id")
+    .eq("author_id", profile.id)
+    .eq("old_slug", slug)
+    .maybeSingle();
+
+  if (!alias || aliasError) {
+    return Astro.redirect("/404", 404);
+  }
+
+  // Alias found - fetch the current slug and redirect (301 permanent)
+  const { data: currentPost, error: currentPostError } = await supabase
+    .from("posts")
+    .select("slug")
+    .eq("id", alias.post_id)
+    .eq("author_id", profile.id)
+    .single();
+
+  if (!currentPost || currentPostError) {
+    return Astro.redirect("/404", 404);
+  }
+
+  // 301 permanent redirect to current canonical URL
+  return Astro.redirect(`/u/${handle}/${currentPost.slug}`, 301);
+}
+
+// Step 4: Render the post
+const session = (await supabase.auth.getSession()).data.session;
+const isOwner = session?.user?.id === post.author_id;
+let userHandle = null;
+
+if (isOwner && session?.user) {
+  const { data: currentProfile } = await supabase
+    .from("profiles")
+    .select("handle")
+    .eq("id", session.user.id)
+    .single();
+  userHandle = currentProfile?.handle || null;
+}
+
+// Ensure author is a single object (not array)
+const authorData = Array.isArray(post.author) ? post.author[0] : post.author;
+
+// Author profile URL
+const authorProfileUrl = authorData?.handle
+  ? `/u/${authorData.handle}`
+  : `/profile/${post.author_id}`;
+---
+
+<EditorLayout title={post.title}>
+  {
+    isOwner && session?.user?.id ? (
+      <PostDetail
+        client:load
+        postId={post.id}
+        userId={session.user.id}
+        userHandle={userHandle}
+      />
+    ) : (
+      <PostActionBar client:load mode="view-only" />
+    )
+  }
+
+  <div class="py-12 space-y-6">
+    <article class="space-y-6">
+      {/* Title */}
+      <h1
+        class="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-5xl tracking-tight break-words"
+      >
+        {post.title}
+      </h1>
+
+      {/* Subtitle */}
+      {
+        post.subtitle && (
+          <h2 class="font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-2xl break-words">
+            {post.subtitle}
+          </h2>
+        )
+      }
+
+      {/* Author info */}
+      <a
+        href={authorProfileUrl}
+        class="flex items-center gap-3 py-4 border-y border-[rgba(63,51,28,0.1)] hover:bg-[rgba(63,51,28,0.03)] transition-colors rounded-lg px-2 -mx-2"
+      >
+        {
+          authorData?.avatar_path ? (
+            <img
+              src={`${import.meta.env.PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${authorData.avatar_path}`}
+              alt={authorData.display_name}
+              class="w-10 h-10 rounded-full object-cover"
+            />
+          ) : (
+            <div class="w-10 h-10 rounded-full bg-[#f4edde] flex items-center justify-center">
+              <span class="font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-lg">
+                {authorData?.display_name?.[0]?.toUpperCase() || "?"}
+              </span>
+            </div>
+          )
+        }
+        <div>
+          <p
+            class="font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-base hover:underline"
+          >
+            {authorData?.display_name || "Anonymous"}
+          </p>
+          <p
+            class="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-sm"
+          >
+            {
+              new Date(post.created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            }
+          </p>
+        </div>
+      </a>
+
+      {/* Content */}
+      <div class="prose prose-lg max-w-none">
+        <p
+          class="font-['Exposure[-10]:Regular',sans-serif] text-[#3f331c] text-lg leading-relaxed whitespace-pre-wrap break-words"
+        >
+          {post.content}
+        </p>
+      </div>
+    </article>
+
+    {/* Comments section */}
+    <div class="pt-12">
+      <CommentsSection
+        client:load
+        postId={post.id}
+        postAuthorId={post.author_id}
+        currentUserId={session?.user?.id || null}
+      />
+    </div>
+  </div>
+</EditorLayout>

@@ -170,6 +170,8 @@ export default function ProfilePage({ profileId, initialProfile }) {
               <div key={post.id} id={`post-${post.id}`}>
                 <PostCard
                   postId={post.id}
+                  authorHandle={post.profiles?.handle || profile.handle}
+                  slug={post.slug}
                   title={post.title}
                   subtitle={post.subtitle}
                   content={post.content}

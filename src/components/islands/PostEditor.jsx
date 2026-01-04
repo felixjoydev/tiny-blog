@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { getSessionUser, getMyProfile } from "../../lib/auth";
-import { createPost, updatePost, deletePost, getPostById } from "../../lib/posts";
+import { createPost, updatePostWithSlug, updatePostContent, deletePost, getPostById } from "../../lib/posts";
+import { generateUniqueSlug, generateSlug, checkSlugAvailability } from "../../lib/slugify";
 import PostActionBar from "./PostActionBar";
 
 /**
@@ -19,6 +20,9 @@ export default function PostEditor({ mode = "create", postId = null }) {
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
   const [userHandle, setUserHandle] = useState(null);
+  const [slugPreview, setSlugPreview] = useState("");
+  const [checkingSlug, setCheckingSlug] = useState(false);
+  const [slugAvailable, setSlugAvailable] = useState(true);
   
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);
@@ -41,6 +45,32 @@ export default function PostEditor({ mode = "create", postId = null }) {
       }
     }
   }, [loading, title, subtitle]);
+
+  // Debounced slug preview and availability check
+  useEffect(() => {
+    if (!title || title.trim() === '' || !userId) {
+      setSlugPreview('');
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      const previewSlug = generateSlug(title);
+      setSlugPreview(previewSlug);
+
+      if (mode === "create") {
+        // Check availability for create mode
+        setCheckingSlug(true);
+        const available = await checkSlugAvailability(userId, previewSlug);
+        setSlugAvailable(available);
+        setCheckingSlug(false);
+      } else {
+        // In edit mode, slug will be made unique by RPC
+        setSlugAvailable(true);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [title, userId, mode]);
 
   const checkAuthAndLoadPost = async () => {
     try {
@@ -115,17 +145,32 @@ export default function PostEditor({ mode = "create", postId = null }) {
 
     try {
       if (mode === "edit" && postId) {
-        // Update existing post
-        const { error: updateError } = await updatePost(postId, title, subtitle, content);
-        if (updateError) {
-          setError("Failed to update post");
+        // Update existing post - split into two calls
+        // 1. Update title and slug via RPC (handles alias creation)
+        const newSlug = generateSlug(title);
+        const { data: slugData, error: slugUpdateError } = await updatePostWithSlug(postId, title, newSlug);
+        if (slugUpdateError) {
+          console.error("Slug update error:", slugUpdateError);
+          setError(slugUpdateError.message || "Failed to update post title");
           setSaving(false);
           return;
         }
+
+        // 2. Update subtitle and content separately (do NOT update title again)
+        const { error: contentUpdateError } = await updatePostContent(postId, subtitle, content);
+        if (contentUpdateError) {
+          console.error("Content update error:", contentUpdateError);
+          setError("Failed to update post content");
+          setSaving(false);
+          return;
+        }
+
+        // Redirect to stable UUID route (which will redirect to canonical)
         window.location.href = `/post/${postId}`;
       } else {
-        // Create new post
-        const { data, error: createError } = await createPost(title, subtitle, content, userId);
+        // Create new post with unique slug
+        const uniqueSlug = await generateUniqueSlug(userId, title);
+        const { data, error: createError } = await createPost(title, subtitle, content, userId, uniqueSlug);
         if (createError) {
           setError("Failed to create post");
           setSaving(false);
