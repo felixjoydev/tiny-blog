@@ -3,6 +3,7 @@ import { supabase } from "../../lib/supabaseClient";
 import { getSessionUser } from "../../lib/auth";
 import { getPostsByAuthor } from "../../lib/posts";
 import PostCard from "./PostCard";
+import ProfileTimeline from "./ProfileTimeline";
 
 /**
  * ProfilePage - Display user profile with posts
@@ -163,19 +164,25 @@ export default function ProfilePage({ profileId, initialProfile }) {
         </div>
       ) : (
         /* Posts Grid */
-        <div className="space-y-6">
-          {posts.map((post) => (
-            <PostCard
-              key={post.id}
-              postId={post.id}
-              title={post.title}
-              subtitle={post.subtitle}
-              content={post.content}
-              commentCount={post.comment_count}
-              createdAt={post.created_at}
-            />
-          ))}
-        </div>
+        <>
+          <div className="space-y-6">
+            {posts.map((post) => (
+              <div key={post.id} id={`post-${post.id}`}>
+                <PostCard
+                  postId={post.id}
+                  title={post.title}
+                  subtitle={post.subtitle}
+                  content={post.content}
+                  commentCount={post.comment_count}
+                  createdAt={post.created_at}
+                />
+              </div>
+            ))}
+          </div>
+          
+          {/* Timeline */}
+          <ProfileTimeline posts={posts} />
+        </>
       )}
     </div>
   );

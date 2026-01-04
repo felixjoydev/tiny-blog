@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { updateComment, deleteComment } from '../../lib/comments';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -19,6 +19,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
   const [isSaving, setIsSaving] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const menuRef = useRef(null);
 
   const isAuthor = currentUserId === comment.author_id;
   const isPostOwner = currentUserId === postAuthorId;
@@ -35,6 +36,23 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
       setAvatarUrl(data.publicUrl);
     }
   }, [comment.profiles?.avatar_path]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
 
   // Truncate content to 50 words
   const words = comment.content.split(/\s+/);
@@ -90,7 +108,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
           <div className="flex gap-2 items-center">
             {/* Avatar */}
             <div 
-              className="w-8 h-8 rounded-[5px] bg-[#D9D9D9] overflow-hidden shrink-0"
+              className="w-8 h-8 rounded-full bg-[#D9D9D9] overflow-hidden shrink-0"
               aria-hidden="true"
             >
               {avatarUrl && (
@@ -104,23 +122,16 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
 
             {/* Name and date */}
             <div className="flex flex-col gap-1">
-              <p 
-                className="text-[#3F331C] text-[0.875rem] tracking-[0.026rem]"
-                style={{ fontFamily: 'Exposure[-20]' }}
-              >
+              <p className="font-['Exposure[-20]:Regular',sans-serif] text-[#3F331C] text-[0.875rem] tracking-[0.026rem]">
                 {comment.profiles?.display_name || 'Unknown User'}
               </p>
               <div className="flex items-center gap-2">
-                <p 
-                  className="text-[#786237] text-[0.75rem] tracking-[0.022rem]"
-                  style={{ fontFamily: 'Exposure[-10]' }}
-                >
+                <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-[0.75rem] tracking-[0.022rem]">
                   {formatDate(comment.created_at)}
                 </p>
                 {isEdited && (
                   <span 
-                    className="text-[#786237] text-[0.75rem] tracking-[0.022rem] opacity-70"
-                    style={{ fontFamily: 'Exposure[-10]' }}
+                    className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-[0.75rem] tracking-[0.022rem] opacity-70"
                     aria-label="This comment has been edited"
                   >
                     (edited)
@@ -132,7 +143,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
 
           {/* More menu */}
           {canEdit || canDelete ? (
-            <div className="relative">
+            <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setShowMenu(!showMenu)}
                 className="w-4 h-4 flex items-center justify-center"
@@ -148,7 +159,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
 
               {showMenu && (
                 <div 
-                  className="absolute right-0 top-6 bg-white rounded-lg shadow-lg py-2 min-w-30 z-10"
+                  className="absolute right-0 top-6 bg-[#F1E0BF] rounded-lg shadow-lg py-2 px-1 min-w-30 z-10"
                   role="menu"
                 >
                   {canEdit && (
@@ -157,8 +168,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
                         setIsEditing(true);
                         setShowMenu(false);
                       }}
-                      className="w-full px-4 py-2 text-left text-[#3F331C] hover:bg-[#F2E1C0] text-[0.875rem]"
-                      style={{ fontFamily: 'Exposure[-10]' }}
+                      className="font-['Exposure[-10]:Regular',sans-serif] w-full px-4 py-2 text-left text-[#3F331C] hover:bg-[#FAECD2] text-[0.875rem] rounded"
                       role="menuitem"
                     >
                       Edit
@@ -170,8 +180,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
                         setShowMenu(false);
                         handleDelete();
                       }}
-                      className="w-full px-4 py-2 text-left text-[#DA5700] hover:bg-[#F2E1C0] text-[0.875rem]"
-                      style={{ fontFamily: 'Exposure[-10]' }}
+                      className="font-['Exposure[-10]:Regular',sans-serif] w-full px-4 py-2 text-left text-[#DA5700] hover:bg-[#FAECD2] text-[0.875rem] rounded"
                       role="menuitem"
                     >
                       Delete
@@ -190,15 +199,13 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
               className="w-full min-h-16 p-3 rounded-lg bg-[#F2E1C0] border-none outline-none resize-none font-['Exposure[-10]:Regular',sans-serif] text-[0.875rem] tracking-[0.018rem] text-[#3F331C]"
-              style={{ fontFamily: 'Exposure[-10]' }}
               aria-label="Edit comment"
             />
             <div className="flex gap-2 mt-2">
               <button
                 onClick={handleSaveEdit}
                 disabled={!editContent.trim() || isSaving}
-                className="px-4 py-1.5 rounded-lg bg-[#DA5700] text-white text-[0.875rem] disabled:opacity-30"
-                style={{ fontFamily: 'Exposure[-10]' }}
+                className="font-['Exposure[-10]:Regular',sans-serif] px-4 py-1.5 rounded-lg bg-[#DA5700] text-white text-[0.875rem] disabled:opacity-30"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
@@ -207,8 +214,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
                   setIsEditing(false);
                   setEditContent(comment.content);
                 }}
-                className="px-4 py-1.5 rounded-lg bg-[#F2E1C0] text-[#3F331C] text-[0.875rem]"
-                style={{ fontFamily: 'Exposure[-10]' }}
+                className="font-['Exposure[-10]:Regular',sans-serif] px-4 py-1.5 rounded-lg bg-[#F2E1C0] text-[#3F331C] text-[0.875rem]"
               >
                 Cancel
               </button>
@@ -216,10 +222,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
           </div>
         ) : (
           <div>
-            <p 
-              className="text-[#3F331C] text-[0.875rem] tracking-[0.018rem] leading-5"
-              style={{ fontFamily: 'Exposure[-10]' }}
-            >
+            <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#3F331C] text-[0.875rem] tracking-[0.018rem] leading-5">
               {displayContent}
               {needsTruncation && !isExpanded && (
                 <button

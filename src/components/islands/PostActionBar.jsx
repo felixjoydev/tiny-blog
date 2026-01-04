@@ -145,7 +145,25 @@ export default function PostActionBar({
   
 
   return (
-    <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-[70px] bg-[#FFF1D5] z-50" style={{ height: 'var(--nav-height)' }}>
+    <nav className="fixed top-0 left-0 right-0 z-50" style={{ height: 'var(--nav-height)' }}>
+      {/* Blur layer with gradient mask */}
+      <div 
+        className="absolute inset-0 -z-10"
+        style={{ 
+          backdropFilter: 'blur(6.55px)', 
+          maskImage: 'linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)', 
+          WebkitMaskImage: 'linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)' 
+        }}
+      />
+      
+      {/* Background gradient */}
+      <div 
+        className="absolute inset-0 -z-10"
+        style={{ background: 'linear-gradient(180deg, rgba(255, 241, 213, 0.79) 0%, rgba(255, 241, 213, 0.00) 100%)' }}
+      />
+      
+      {/* Content */}
+      <div className="relative flex items-center justify-between px-[70px] h-full">
         {/* Left: Logo (view-only) or Close button (other modes) */}
         {mode === "view-only" ? (
           <a
@@ -230,16 +248,7 @@ export default function PostActionBar({
               onClick={onPublish}
               className="bg-[#da5700] flex gap-[10px] items-center justify-center px-4 py-[10px] rounded-[100px] hover:bg-[#c44f00] transition-colors"
             >
-              <svg 
-                className="w-4 h-4" 
-                viewBox="0 0 16 16" 
-                fill="none"
-              >
-                <path 
-                  d="M11.3334 1.33333C11.7754 0.891357 12.3671 0.643066 12.9844 0.643066C13.6017 0.643066 14.1933 0.891357 14.6354 1.33333C15.0774 1.77531 15.3257 2.36696 15.3257 2.98425C15.3257 3.60154 15.0774 4.19319 14.6354 4.63517L5.16211 14.1085L1.33545 15L2.22678 11.1733L11.3334 1.33333Z" 
-                  fill="white"
-                />
-              </svg>
+              <img src={writeIcon.src} alt="" className="w-4 h-4" />
               <span className="font-['Exposure[-40]:Regular',sans-serif] text-white text-[16px] tracking-[0.48px]">
                 Publish
               </span>
@@ -295,16 +304,7 @@ export default function PostActionBar({
                 onClick={onPublish}
                 className="bg-[#da5700] flex gap-[10px] items-center justify-center px-4 py-[10px] rounded-[100px] hover:bg-[#c44f00] transition-colors"
               >
-                <svg 
-                  className="w-4 h-4" 
-                  viewBox="0 0 16 16" 
-                  fill="none"
-                >
-                  <path 
-                    d="M11.3334 1.33333C11.7754 0.891357 12.3671 0.643066 12.9844 0.643066C13.6017 0.643066 14.1933 0.891357 14.6354 1.33333C15.0774 1.77531 15.3257 2.36696 15.3257 2.98425C15.3257 3.60154 15.0774 4.19319 14.6354 4.63517L5.16211 14.1085L1.33545 15L2.22678 11.1733L11.3334 1.33333Z" 
-                    fill="white"
-                  />
-                </svg>
+                <img src={writeIcon.src} alt="" className="w-4 h-4" />
                 <span className="font-['Exposure[-40]:Regular',sans-serif] text-white text-[16px] tracking-[0.48px]">
                   Publish
                 </span>
@@ -313,6 +313,7 @@ export default function PostActionBar({
 
           {/* view-only mode: no action buttons */}
         </div>
+      </div>
     </nav>
   );
 }

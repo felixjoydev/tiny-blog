@@ -163,17 +163,17 @@ export default function NavActions() {
 			{showDropdown && (
 				<div
 					ref={dropdownRef}
-					className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-100"
+					className="absolute top-full right-0 mt-2 w-48 bg-[#F1E0BF] rounded-lg shadow-lg py-2 px-1 z-50"
 				>
 					<a
 						href="/settings"
-						className="block px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors font-['Exposure[-40]:Regular',sans-serif]"
+						className="block px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors font-['Exposure[-40]:Regular',sans-serif] rounded"
 					>
 						Settings
 					</a>
 					<button
 						onClick={handleLogout}
-						className="w-full text-left px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors font-['Exposure[-40]:Regular',sans-serif]"
+						className="w-full text-left px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors font-['Exposure[-40]:Regular',sans-serif] rounded"
 					>
 						Logout
 					</button>

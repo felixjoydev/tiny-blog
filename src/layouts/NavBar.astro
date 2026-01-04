@@ -3,13 +3,27 @@ import NavActions from "../components/islands/NavActions.jsx";
 import logo from "../assets/icons/tiny-logo.svg";
 ---
 
-<nav
-  class="fixed top-0 left-0 right-0 flex items-center justify-between px-[70px] bg-[#FFFAEF] z-50"
-  style="height: var(--nav-height);"
->
-  <a href="/" class="flex items-center">
-    <img src={logo.src} alt="Tiny Blog" class="h-[55px] w-[50px]" />
-  </a>
+<nav class="fixed top-0 left-0 right-0 z-50" style="height: var(--nav-height);">
+  <!-- Blur layer with gradient mask -->
+  <div
+    class="absolute inset-0 -z-10"
+    style="backdrop-filter: blur(6.55px); mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%); -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);"
+  >
+  </div>
 
-  <NavActions client:load />
+  <!-- Background gradient -->
+  <div
+    class="absolute inset-0 -z-10"
+    style="background: linear-gradient(180deg, rgba(255, 250, 239, 0.79) 0%, rgba(255, 250, 239, 0.00) 100%);"
+  >
+  </div>
+
+  <!-- Content -->
+  <div class="relative flex items-center justify-between px-[70px] h-full">
+    <a href="/" class="flex items-center">
+      <img src={logo.src} alt="Tiny Blog" class="h-[55px] w-[50px]" />
+    </a>
+
+    <NavActions client:load />
+  </div>
 </nav>

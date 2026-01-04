@@ -1,4 +1,5 @@
 import CommentItem from './CommentItem.jsx';
+import bearCommentIcon from '../../assets/icons/bear-comment.svg';
 
 /**
  * CommentList component displays comments with dividers and empty state
@@ -22,10 +23,7 @@ export default function CommentList({
   if (isLoading) {
     return (
       <div className="w-full py-8 text-center">
-        <p 
-          className="text-[#786237] text-[0.875rem]"
-          style={{ fontFamily: 'Exposure[-10]' }}
-        >
+        <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-[0.875rem]">
           Loading comments...
         </p>
       </div>
@@ -38,7 +36,7 @@ export default function CommentList({
         {/* Bear comment icon */}
         <div className="w-[76.421px] h-[80.853px]">
           <img 
-            src="/icons/bear-comment.svg" 
+            src={bearCommentIcon.src} 
             alt="" 
             className="w-full h-full"
           />
@@ -46,16 +44,10 @@ export default function CommentList({
 
         {/* Empty state text */}
         <div className="flex flex-col gap-1 text-center">
-          <p 
-            className="text-[#3F331C] text-[1.25rem] tracking-[0.037rem]"
-            style={{ fontFamily: 'Exposure[-40]' }}
-          >
+          <p className="font-['Exposure[-40]:Regular',sans-serif] text-[#3F331C] text-[1.25rem] tracking-[0.037rem]">
             No comments yet
           </p>
-          <p 
-            className="text-[#786237] text-[1rem] tracking-[0.02rem] leading-6"
-            style={{ fontFamily: 'Exposure[-10]' }}
-          >
+          <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-[1rem] tracking-[0.02rem] leading-6">
             Be the first one to comment
           </p>
         </div>

@@ -76,27 +76,24 @@ export default function CommentForm({ postId, currentUserId, onCommentAdded, onA
           placeholder="Write your thoughts"
           aria-label="Write a comment"
           className="w-full min-h-16 bg-transparent border-none outline-none resize-none font-['Exposure[-10]:Regular',sans-serif] text-[0.875rem] tracking-[0.018rem] text-[#3F331C] placeholder:text-[#3F331C] placeholder:opacity-50"
-          style={{ fontFamily: 'Exposure[-10]' }}
         />
         
         {error && (
-          <p className="text-[#DA5700] text-[0.75rem] mt-2" role="alert">
+          <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#DA5700] text-[0.75rem] mt-2" role="alert">
             {error}
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={!content.trim() || isSubmitting}
-          aria-label="Submit comment"
-          className="mt-4 px-6 py-2 rounded-[0.625rem] bg-[#DA5700] text-white font-['Exposure[-10]:Regular',sans-serif] text-[0.875rem] tracking-[0.018rem] transition-opacity disabled:opacity-30 hover:opacity-90"
-          style={{ 
-            fontFamily: 'Exposure[-10]',
-            opacity: !content.trim() || isSubmitting ? 0.3 : 1 
-          }}
-        >
-          {isSubmitting ? 'Posting...' : 'Respond'}
-        </button>
+        <div className="flex justify-end mt-4">
+          <button
+            type="submit"
+            disabled={!content.trim() || isSubmitting}
+            aria-label="Submit comment"
+            className="inline-flex py-2 px-2.5 justify-center items-center gap-2.5 rounded-[6.25rem] bg-[#DA5700] font-['Exposure[-10]:Regular',sans-serif] text-white text-[0.875rem] tracking-[0.018rem] disabled:opacity-50"
+          >
+            {isSubmitting ? 'Posting...' : 'Respond'}
+          </button>
+        </div>
       </div>
     </form>
   );

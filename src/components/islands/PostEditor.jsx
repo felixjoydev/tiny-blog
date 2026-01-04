@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { getSessionUser, getMyProfile } from "../../lib/auth";
 import { createPost, updatePost, deletePost, getPostById } from "../../lib/posts";
@@ -18,10 +18,28 @@ export default function PostEditor({ mode = "create", postId = null }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
+  
+  const titleRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
     checkAuthAndLoadPost();
   }, []);
+
+  // Auto-resize textareas when content is loaded (for edit mode)
+  useEffect(() => {
+    if (!loading) {
+      if (titleRef.current && title) {
+        titleRef.current.style.height = 'auto';
+        titleRef.current.style.height = titleRef.current.scrollHeight + 'px';
+      }
+      if (subtitleRef.current && subtitle) {
+        subtitleRef.current.style.height = 'auto';
+        subtitleRef.current.style.height = subtitleRef.current.scrollHeight + 'px';
+      }
+    }
+  }, [loading, title, subtitle]);
 
   const checkAuthAndLoadPost = async () => {
     try {
@@ -143,6 +161,15 @@ export default function PostEditor({ mode = "create", postId = null }) {
     }
   };
 
+  const handleKeyDown = (e, nextField) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (nextField && nextField.current) {
+        nextField.current.focus();
+      }
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -168,7 +195,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
         onDelete={mode === "edit" ? handleDelete : undefined}
       />
       
-      <div className="pt-20 pb-12">
+      <div className="py-12">
         {error && (
           <div className="mb-6 p-4 bg-[#ffe5e5] border border-[#B42018] rounded-lg">
             <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#B42018] text-sm">
@@ -179,27 +206,42 @@ export default function PostEditor({ mode = "create", postId = null }) {
 
         <div className="space-y-6">
           {/* Title Input */}
-          <input
-            type="text"
+          <textarea
+            ref={titleRef}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            onKeyDown={(e) => handleKeyDown(e, subtitleRef)}
             placeholder="Title"
             disabled={saving}
-            className="w-full bg-transparent border-none outline-none font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-5xl placeholder:text-[#d4c7a8] tracking-tight resize-none"
+            rows={1}
+            className="w-full bg-transparent border-none outline-none font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-5xl placeholder:text-[#d4c7a8] tracking-tight resize-none leading-tight overflow-y-hidden"
+            style={{ minHeight: 'auto' }}
+            onInput={(e) => {
+              e.target.style.height = 'auto';
+              e.target.style.height = e.target.scrollHeight + 'px';
+            }}
           />
 
           {/* Subtitle Input */}
-          <input
-            type="text"
+          <textarea
+            ref={subtitleRef}
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
+            onKeyDown={(e) => handleKeyDown(e, contentRef)}
             placeholder="Subtitle"
             disabled={saving}
-            className="w-full bg-transparent border-none outline-none font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-2xl placeholder:text-[#d4c7a8] tracking-tight resize-none"
+            rows={1}
+            className="w-full bg-transparent border-none outline-none font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-2xl placeholder:text-[#d4c7a8] tracking-tight resize-none leading-tight overflow-y-hidden"
+            style={{ minHeight: 'auto' }}
+            onInput={(e) => {
+              e.target.style.height = 'auto';
+              e.target.style.height = e.target.scrollHeight + 'px';
+            }}
           />
 
           {/* Content Input */}
           <textarea
+            ref={contentRef}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Start writing or type / for commands"

@@ -16,6 +16,20 @@ export default function PostCard({
   commentCount = 0, 
   createdAt 
 }) {
+  // Truncate title to 110 characters
+  const truncateTitle = (text) => {
+    if (!text) return '';
+    if (text.length <= 110) return text;
+    return text.substring(0, 110) + '...';
+  };
+
+  // Truncate subtitle to 100 characters
+  const truncateSubtitle = (text) => {
+    if (!text) return '';
+    if (text.length <= 100) return text;
+    return text.substring(0, 100) + '...';
+  };
+
   // Truncate content to 24 words
   const truncateContent = (text) => {
     const words = text.split(' ');
@@ -41,7 +55,7 @@ export default function PostCard({
   return (
     <article
       onClick={handleClick}
-      className="cursor-pointer transition-all hover:shadow-lg"
+      className="cursor-pointer transition-all duration-300"
       style={{
         borderRadius: '1.875rem',
         border: '0.1px solid #D2E5E5',
@@ -49,16 +63,22 @@ export default function PostCard({
         boxShadow: '0 0 2px 0 rgba(0, 0, 0, 0.08), 0 4px 4px 0 rgba(128, 128, 128, 0.08), 0 2px 2px 0 rgba(128, 128, 128, 0.08), 0 1px 1px 0 rgba(128, 128, 128, 0.08)',
         padding: '1.5rem'
       }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = '0 0 4px 0 rgba(0, 0, 0, 0.10), 0 8px 12px 0 rgba(128, 128, 128, 0.12), 0 4px 6px 0 rgba(128, 128, 128, 0.10), 0 2px 4px 0 rgba(128, 128, 128, 0.08)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '0 0 2px 0 rgba(0, 0, 0, 0.08), 0 4px 4px 0 rgba(128, 128, 128, 0.08), 0 2px 2px 0 rgba(128, 128, 128, 0.08), 0 1px 1px 0 rgba(128, 128, 128, 0.08)';
+      }}
     >
       {/* Title */}
-      <h3 className="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-2xl tracking-tight mb-2">
-        {title}
+      <h3 className="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-2xl tracking-tight mb-2 break-words">
+        {truncateTitle(title)}
       </h3>
 
       {/* Subtitle */}
       {subtitle && (
-        <p className="font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-lg mb-3">
-          {subtitle}
+        <p className="font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-lg mb-3 break-words">
+          {truncateSubtitle(subtitle)}
         </p>
       )}
 
@@ -96,18 +116,18 @@ export default function PostCard({
       </div>
 
       {/* Content snippet */}
-      <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#3f331c] text-base leading-relaxed mb-4">
+      <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#3f331c] text-base leading-relaxed mb-4 break-words">
         {truncateContent(content)}
       </p>
 
       {/* Read more link */}
-      <a 
+      {/* <a 
         href={`/post/${postId}`}
         className="font-['Exposure[-20]:Regular',sans-serif] text-[#da5700] text-base hover:underline inline-block"
         onClick={(e) => e.stopPropagation()}
       >
         Read more
-      </a>
+      </a> */}
     </article>
   );
 }

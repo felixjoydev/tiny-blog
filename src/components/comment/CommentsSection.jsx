@@ -64,10 +64,7 @@ export default function CommentsSection({ postId, postAuthorId, currentUserId })
   return (
     <div className="w-full max-w-3xl mx-auto">
       {/* Comments heading */}
-      <h2 
-        className="text-[#3F331C] text-[1.5rem] tracking-[0.045rem] mb-8"
-        style={{ fontFamily: 'Exposure[-40]' }}
-      >
+      <h2 className="font-['Exposure[-40]:Regular',sans-serif] text-[#3F331C] text-[1.5rem] tracking-[0.045rem] mb-8">
         Comments
       </h2>
 
