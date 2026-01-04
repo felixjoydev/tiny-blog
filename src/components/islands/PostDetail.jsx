@@ -7,8 +7,9 @@ import { deletePost } from "../../lib/posts";
  * @param {Object} props
  * @param {string} props.postId - Post ID
  * @param {string} props.userId - Current user ID
+ * @param {string} [props.userHandle] - Current user handle (optional)
  */
-export default function PostDetail({ postId, userId }) {
+export default function PostDetail({ postId, userId, userHandle }) {
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this post?")) {
       return;
@@ -23,7 +24,11 @@ export default function PostDetail({ postId, userId }) {
       }
       
       // Redirect to profile after deletion
-      window.location.href = `/profile/${userId}`;
+      if (userHandle) {
+        window.location.href = `/u/${userHandle}`;
+      } else {
+        window.location.href = `/profile/${userId}`;
+      }
     } catch (err) {
       console.error("Delete error:", err);
       alert("An error occurred while deleting the post");

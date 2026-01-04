@@ -5,6 +5,7 @@ import PostActionBar from "../../components/islands/PostActionBar";
 import CommentsSection from "../../components/comment/CommentsSection";
 import { createSupabaseServerClient } from "../../lib/supabaseServer";
 import { getPostById } from "../../lib/posts";
+import { getProfileUrl } from "../../lib/urls";
 
 export const prerender = false;
 
@@ -32,15 +33,29 @@ const postData = post as {
   profiles?: {
     id: string;
     display_name: string;
+    handle?: string;
     avatar_path?: string;
   };
 };
 
+// Get author profile URL
+const authorProfileUrl = postData.profiles?.handle
+  ? `/u/${postData.profiles.handle}`
+  : `/profile/${postData.author_id}`;
+
 // Check if current user is the author
 let isAuthor = false;
+let userHandle = null;
 const session = await supabase.auth.getSession();
 if (session?.data?.session?.user?.id === postData.author_id) {
   isAuthor = true;
+  // Fetch current user's handle for redirect after delete
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("handle")
+    .eq("id", session.data.session.user.id)
+    .single();
+  userHandle = profile?.handle || null;
 }
 ---
 
@@ -51,6 +66,7 @@ if (session?.data?.session?.user?.id === postData.author_id) {
         client:load
         postId={id}
         userId={session.data.session.user.id}
+        userHandle={userHandle}
       />
     ) : (
       <PostActionBar client:load mode="view-only" />
@@ -76,8 +92,9 @@ if (session?.data?.session?.user?.id === postData.author_id) {
       }
 
       {/* Author info */}
-      <div
-        class="flex items-center gap-3 py-4 border-y border-[rgba(63,51,28,0.1)]"
+      <a
+        href={authorProfileUrl}
+        class="flex items-center gap-3 py-4 border-y border-[rgba(63,51,28,0.1)] hover:bg-[rgba(63,51,28,0.03)] transition-colors rounded-lg px-2 -mx-2"
       >
         {
           postData.profiles?.avatar_path ? (
@@ -96,7 +113,7 @@ if (session?.data?.session?.user?.id === postData.author_id) {
         }
         <div>
           <p
-            class="font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-base"
+            class="font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-base hover:underline"
           >
             {postData.profiles?.display_name || "Anonymous"}
           </p>
@@ -112,7 +129,7 @@ if (session?.data?.session?.user?.id === postData.author_id) {
             }
           </p>
         </div>
-      </div>
+      </a>
 
       {/* Content */}
       <div class="prose prose-lg max-w-none">

@@ -23,6 +23,13 @@ const { data: profile, error } = await supabase
 if (error || !profile) {
   return Astro.redirect("/");
 }
+
+// Redirect to handle-based URL if handle exists (307 temporary redirect)
+if (profile.handle) {
+  return Astro.redirect(`/u/${profile.handle}`, 307);
+}
+
+// Fallback: render for profiles without handles (legacy support)
 ---
 
 <Layout title={`${profile.display_name} - Tiny Blog`}>

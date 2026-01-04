@@ -18,6 +18,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [userHandle, setUserHandle] = useState(null);
   
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);
@@ -52,12 +53,14 @@ export default function PostEditor({ mode = "create", postId = null }) {
 
       setUserId(user.id);
 
-      // Check if onboarded
-      const { isOnboarded } = await getMyProfile(supabase);
+      // Check onboarding status and get handle
+      const { profile, isOnboarded } = await getMyProfile(supabase);
       if (!isOnboarded) {
         window.location.href = "/accounts/setup";
         return;
       }
+
+      setUserHandle(profile?.handle || null);
 
       // If edit mode, load existing post
       if (mode === "edit" && postId) {
@@ -129,7 +132,11 @@ export default function PostEditor({ mode = "create", postId = null }) {
           return;
         }
         // Redirect to user's profile page after creating post
-        window.location.href = `/profile/${userId}`;
+        if (userHandle) {
+          window.location.href = `/u/${userHandle}`;
+        } else {
+          window.location.href = `/profile/${userId}`;
+        }
       }
     } catch (err) {
       console.error("Publish error:", err);

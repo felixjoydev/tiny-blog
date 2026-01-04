@@ -11,6 +11,17 @@ const {
 
 // If logged in, redirect to their profile page
 if (session?.user) {
+  // Fetch user's handle
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("handle")
+    .eq("id", session.user.id)
+    .single();
+
+  if (profile?.handle) {
+    return Astro.redirect(`/u/${profile.handle}`);
+  }
+  // Fallback to UUID route if no handle
   return Astro.redirect(`/profile/${session.user.id}`);
 }
 ---

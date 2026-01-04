@@ -1,0 +1,37 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { createSupabaseServerClient } from "../../lib/supabaseServer";
+import ProfilePage from "../../components/islands/ProfilePage.jsx";
+
+export const prerender = false;
+
+const { handle } = Astro.params;
+
+if (!handle) {
+  return Astro.redirect("/");
+}
+
+const supabase = createSupabaseServerClient(Astro.cookies);
+
+// Fetch profile by handle
+const { data: profile, error } = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("handle", handle.toLowerCase())
+  .single();
+
+if (error || !profile) {
+  // Handle not found - return 404
+  return new Response(null, {
+    status: 404,
+    statusText: "Profile not found",
+  });
+}
+
+// Profile found - render using the UUID
+const profileId = profile.id;
+---
+
+<Layout title={`@${profile.handle} - ${profile.display_name} - Tiny Blog`}>
+  <ProfilePage profileId={profileId} initialProfile={profile} client:load />
+</Layout>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { updateComment, deleteComment } from '../../lib/comments';
 import { supabase } from '../../lib/supabaseClient';
+import { getProfileUrl } from '../../lib/urls';
 
 /**
  * CommentItem component with edit/delete functionality
@@ -26,6 +27,11 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
   const canEdit = isAuthor;
   const canDelete = isAuthor || isPostOwner;
   const isEdited = comment.updated_at && new Date(comment.updated_at).getTime() !== new Date(comment.created_at).getTime();
+
+  // Get author profile URL
+  const authorProfileUrl = comment.profiles?.handle 
+    ? getProfileUrl(comment.profiles) 
+    : `/profile/${comment.author_id}`;
 
   // Load avatar
   useEffect(() => {
@@ -122,9 +128,12 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
 
             {/* Name and date */}
             <div className="flex flex-col gap-1">
-              <p className="font-['Exposure[-20]:Regular',sans-serif] text-[#3F331C] text-[0.875rem] tracking-[0.026rem]">
+              <a 
+                href={authorProfileUrl}
+                className="font-['Exposure[-20]:Regular',sans-serif] text-[#3F331C] text-[0.875rem] tracking-[0.026rem] hover:underline"
+              >
                 {comment.profiles?.display_name || 'Unknown User'}
-              </p>
+              </a>
               <div className="flex items-center gap-2">
                 <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-[0.75rem] tracking-[0.022rem]">
                   {formatDate(comment.created_at)}

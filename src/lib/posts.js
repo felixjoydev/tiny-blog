@@ -36,6 +36,7 @@ export const getPostById = async (id) => {
       profiles:author_id (
         id,
         display_name,
+        handle,
         avatar_path
       )
     `)
@@ -96,6 +97,7 @@ export const getPostsByAuthor = async (authorId) => {
       profiles:author_id (
         id,
         display_name,
+        handle,
         avatar_path
       ),
       comments (count)

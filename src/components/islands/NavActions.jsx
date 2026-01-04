@@ -67,7 +67,7 @@ export default function NavActions() {
 		try {
 			const { data, error } = await supabase
 				.from('profiles')
-				.select('display_name, avatar_path')
+				.select('display_name, handle, avatar_path')
 				.eq('id', userId)
 				.single();
 
@@ -165,6 +165,14 @@ export default function NavActions() {
 					ref={dropdownRef}
 					className="absolute top-full right-0 mt-2 w-48 bg-[#F1E0BF] rounded-lg shadow-lg py-2 px-1 z-50"
 				>
+					{profile?.handle && (
+						<a
+							href={`/u/${profile.handle}`}
+							className="block px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors font-['Exposure[-40]:Regular',sans-serif] rounded"
+						>
+							View Profile
+						</a>
+					)}
 					<a
 						href="/settings"
 						className="block px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors font-['Exposure[-40]:Regular',sans-serif] rounded"

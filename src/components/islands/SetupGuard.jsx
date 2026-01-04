@@ -40,7 +40,12 @@ export default function SetupGuard() {
 
 			// Check if profile is complete
 			if (isProfileComplete(profileData)) {
-				window.location.href = `/profile/${session.user.id}`;
+				// Redirect to handle-based URL if available
+				if (profileData.handle) {
+					window.location.href = `/u/${profileData.handle}`;
+				} else {
+					window.location.href = `/profile/${session.user.id}`;
+				}
 				return;
 			}
 

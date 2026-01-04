@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { normalizeHandle, getHandleError, RESERVED_HANDLES } from '../../lib/urls';
 import logo from '../../assets/icons/tiny-logo.svg';
 import scanUserIcon from '../../assets/icons/scan-user.svg';
 import avatarCloseIcon from '../../assets/icons/avatar-close.svg';
 
 export default function AccountSetup({ profile, userId }) {
 	const [displayName, setDisplayName] = useState(profile?.display_name === 'New user' ? '' : profile?.display_name || '');
+	const [handle, setHandle] = useState('');
+	const [handleError, setHandleError] = useState('');
+	const [checkingHandle, setCheckingHandle] = useState(false);
 	const [bio, setBio] = useState(profile?.bio || '');
 	const [avatarFile, setAvatarFile] = useState(null);
 	const [avatarPreview, setAvatarPreview] = useState(null);
@@ -13,6 +17,7 @@ export default function AccountSetup({ profile, userId }) {
 	const [uploading, setUploading] = useState(false);
 	const [error, setError] = useState('');
 	const fileInputRef = useRef(null);
+	const checkHandleTimeoutRef = useRef(null);
 
 	// Load existing avatar preview if available
 	useEffect(() => {
@@ -21,6 +26,63 @@ export default function AccountSetup({ profile, userId }) {
 			setAvatarPreview(data.publicUrl);
 		}
 	}, [existingAvatarPath]);
+
+	// Live handle availability check (debounced)
+	useEffect(() => {
+		// Clear existing timeout
+		if (checkHandleTimeoutRef.current) {
+			clearTimeout(checkHandleTimeoutRef.current);
+		}
+
+		// Reset error when handle changes
+		setHandleError('');
+
+		if (!handle || handle.trim() === '') {
+			return;
+		}
+
+		const normalized = normalizeHandle(handle);
+
+		// Check format first
+		const formatError = getHandleError(normalized);
+		if (formatError) {
+			setHandleError(formatError);
+			return;
+		}
+
+		// Debounce the availability check
+		checkHandleTimeoutRef.current = setTimeout(async () => {
+			setCheckingHandle(true);
+
+			try {
+				const { data, error } = await supabase
+					.from('profiles')
+					.select('handle')
+					.eq('handle', normalized)
+					.maybeSingle();
+
+				if (error) {
+					console.error('Handle check error:', error);
+					setCheckingHandle(false);
+					return;
+				}
+
+				if (data) {
+					setHandleError('This handle is already taken');
+				}
+			} catch (err) {
+				console.error('Unexpected error checking handle:', err);
+			} finally {
+				setCheckingHandle(false);
+			}
+		}, 500); // 500ms debounce
+
+		return () => {
+			if (checkHandleTimeoutRef.current) {
+				clearTimeout(checkHandleTimeoutRef.current);
+			}
+		};
+	}, [handle]);
 
 	const handleFileSelect = (e) => {
 		const file = e.target.files[0];
@@ -74,6 +136,23 @@ export default function AccountSetup({ profile, userId }) {
 			return false;
 		}
 
+		if (!handle || handle.trim() === '') {
+			setError('Handle is required');
+			return false;
+		}
+
+		const normalized = normalizeHandle(handle);
+		const handleValidationError = getHandleError(normalized);
+		if (handleValidationError) {
+			setError(handleValidationError);
+			return false;
+		}
+
+		if (handleError) {
+			setError(handleError);
+			return false;
+		}
+
 		if (!bio || bio.trim() === '') {
 			setError('Bio is required');
 			return false;
@@ -120,12 +199,14 @@ export default function AccountSetup({ profile, userId }) {
 				avatarPath = uploadPath;
 			}
 
-			// Update profile with name, bio, avatar_path, and onboarded flag
+			// Update profile with name, bio, handle, avatar_path, and onboarded flag
+			const normalizedHandle = normalizeHandle(handle);
 			const { error: updateError } = await supabase
 				.from('profiles')
 				.update({
 					display_name: displayName.trim(),
 					bio: bio.trim(),
+					handle: normalizedHandle,
 					avatar_path: avatarPath,
 					onboarded: true,
 				})
@@ -144,8 +225,8 @@ export default function AccountSetup({ profile, userId }) {
 				sessionStorage.removeItem('returnUrl');
 				window.location.href = returnUrl;
 			} else {
-				// Default: redirect to profile page
-				window.location.href = `/profile/${userId}`;
+				// Redirect to handle-based profile URL
+				window.location.href = `/u/${normalizedHandle}`;
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err);
@@ -155,7 +236,16 @@ export default function AccountSetup({ profile, userId }) {
 	};
 
 	const isFormValid = () => {
-		return displayName && displayName.trim() !== '' && bio && bio.trim() !== '';
+		return (
+			displayName &&
+			displayName.trim() !== '' &&
+			handle &&
+			handle.trim() !== '' &&
+			!handleError &&
+			!checkingHandle &&
+			bio &&
+			bio.trim() !== ''
+		);
 	};
 
 	const getAvatarDisplay = () => {
@@ -252,6 +342,43 @@ export default function AccountSetup({ profile, userId }) {
 							displayName ? 'text-[#3f331c]' : 'text-[#3f331c] opacity-50 placeholder:text-[#3f331c] placeholder:opacity-50'
 						}`}
 					/>
+
+					{/* Handle Input */}
+					<div className="flex flex-col gap-1 w-full">
+						<p className="font-['Exposure[-10]:Regular',sans-serif] text-[11px] text-[#786237] px-1">
+							Your handle cannot be changed later. Choose carefully!
+						</p>
+						<div className="relative w-full">
+							<span className="absolute left-2.5 top-1/2 -translate-y-1/2 font-['Exposure[-10]:Regular',sans-serif] text-[14px] text-[#3f331c] pointer-events-none">
+								@
+							</span>
+							<input
+								type="text"
+								placeholder="your_handle"
+								value={handle}
+								onChange={(e) => setHandle(e.target.value)}
+								disabled={uploading}
+								className={`bg-[#f4edde] h-10 pl-6 pr-2.5 py-2.5 rounded-lg w-full font-['Exposure[-10]:Regular',sans-serif] text-[14px] border-none outline-none ${
+									handle ? 'text-[#3f331c]' : 'text-[#3f331c] opacity-50 placeholder:text-[#3f331c] placeholder:opacity-50'
+								}`}
+							/>
+							{checkingHandle && (
+								<span className="absolute right-2.5 top-1/2 -translate-y-1/2 font-['Exposure[-10]:Regular',sans-serif] text-[10px] text-[#786237]">
+									Checking...
+								</span>
+							)}
+						</div>
+						{handleError && (
+							<p className="text-[#B42018] font-['Exposure[-10]:Regular',sans-serif] text-[11px] px-1">
+								{handleError}
+							</p>
+						)}
+						{handle && !handleError && !checkingHandle && (
+							<p className="text-[#4A7C59] font-['Exposure[-10]:Regular',sans-serif] text-[11px] px-1">
+								✓ Available
+							</p>
+						)}
+					</div>
 
 					{/* Bio Textarea */}
 					<textarea

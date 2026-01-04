@@ -17,6 +17,7 @@ export async function getCommentsByPostId(postId) {
       profiles:author_id (
         id,
         display_name,
+        handle,
         avatar_path
       )
     `)
@@ -50,6 +51,7 @@ export async function createComment(postId, authorId, content) {
       profiles:author_id (
         id,
         display_name,
+        handle,
         avatar_path
       )
     `)
