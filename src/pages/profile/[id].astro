@@ -1,11 +1,17 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { supabase } from "../../lib/supabaseClient.js";
+import { createSupabaseServerClient } from "../../lib/supabaseServer";
+import ProfilePage from "../../components/islands/ProfilePage.jsx";
 
-// This makes the route server-rendered instead of static
 export const prerender = false;
 
 const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/");
+}
+
+const supabase = createSupabaseServerClient(Astro.cookies);
 
 // Fetch profile data
 const { data: profile, error } = await supabase
@@ -19,53 +25,6 @@ if (error || !profile) {
 }
 ---
 
-<Layout>
-  <div class="max-w-4xl mx-auto px-4 py-8">
-    <div class="flex flex-col items-center gap-6">
-      {
-        profile.avatar_path ? (
-          <img
-            src={
-              supabase.storage.from("avatars").getPublicUrl(profile.avatar_path)
-                .data.publicUrl
-            }
-            alt={profile.display_name}
-            class="w-32 h-32 rounded-full object-cover"
-          />
-        ) : (
-          <div class="w-32 h-32 rounded-full bg-[#3f331c] flex items-center justify-center">
-            <span class="text-white text-[48px] font-['Exposure[-40]:Regular',sans-serif]">
-              {profile.display_name?.charAt(0).toUpperCase() || "U"}
-            </span>
-          </div>
-        )
-      }
-
-      <div class="text-center">
-        <h1
-          class="text-[32px] font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] tracking-[0.96px]"
-        >
-          {profile.display_name}
-        </h1>
-        <p
-          class="text-[16px] font-['Exposure[-10]:Regular',sans-serif] text-[#786237] mt-2"
-        >
-          {profile.bio}
-        </p>
-      </div>
-
-      <div class="mt-8 w-full">
-        <h2
-          class="text-[24px] font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] mb-4"
-        >
-          Posts
-        </h2>
-        <p
-          class="text-[14px] font-['Exposure[-10]:Regular',sans-serif] text-[#786237]"
-        >
-          No posts yet. Profile page design coming soon!
-        </p>
-      </div>
-    </div>
-  </div>
+<Layout title={`${profile.display_name} - Tiny Blog`}>
+  <ProfilePage profileId={id} initialProfile={profile} client:load />
 </Layout>

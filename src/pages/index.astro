@@ -1,5 +1,41 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { createSupabaseServerClient } from "../lib/supabaseServer";
+
+export const prerender = false;
+
+const supabase = createSupabaseServerClient(Astro.cookies);
+const {
+  data: { session },
+} = await supabase.auth.getSession();
+
+// If logged in, redirect to their profile page
+if (session?.user) {
+  return Astro.redirect(`/profile/${session.user.id}`);
+}
 ---
 
-<Layout title="Home" />
+<Layout title="Home - Tiny Blog">
+  <div class="max-w-125 mx-auto px-4 py-12">
+    <div class="text-center space-y-6">
+      <h1
+        class="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-5xl"
+      >
+        Welcome to Tiny Blog
+      </h1>
+      <p
+        class="font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-xl"
+      >
+        Share your thoughts with the world
+      </p>
+      <div class="flex gap-4 justify-center pt-6">
+        <a
+          href="/auth"
+          class="bg-[#da5700] text-white px-6 py-3 rounded-[100px] font-['Exposure[-20]:Regular',sans-serif] text-base hover:bg-[#c44f00] transition-colors"
+        >
+          Get Started
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -82,3 +82,32 @@ export const deletePost = async (id) => {
 
   return { error };
 };
+
+/**
+ * Get posts by author with comment count
+ * @param {string} authorId - Author's user ID
+ * @returns {Promise<{data: array | null, error: object | null}>}
+ */
+export const getPostsByAuthor = async (authorId) => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select(`
+      *,
+      profiles:author_id (
+        id,
+        display_name,
+        avatar_path
+      ),
+      comments (count)
+    `)
+    .eq("author_id", authorId)
+    .order("created_at", { ascending: false });
+
+  // Transform to include comment count
+  const postsWithCommentCount = data?.map(post => ({
+    ...post,
+    comment_count: post.comments?.[0]?.count || 0
+  }));
+
+  return { data: postsWithCommentCount, error };
+};

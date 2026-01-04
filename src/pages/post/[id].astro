@@ -1,6 +1,8 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import { supabase } from "../../lib/supabaseClient";
+import EditorLayout from "../../layouts/EditorLayout.astro";
+import PostDetail from "../../components/islands/PostDetail";
+import PostActionBar from "../../components/islands/PostActionBar";
+import { createSupabaseServerClient } from "../../lib/supabaseServer";
 import { getPostById } from "../../lib/posts";
 
 export const prerender = false;
@@ -11,6 +13,7 @@ if (!id) {
   return Astro.redirect("/");
 }
 
+const supabase = createSupabaseServerClient(Astro.cookies);
 const { data: post, error } = await getPostById(id);
 
 if (error || !post) {
@@ -40,8 +43,20 @@ if (session?.data?.session?.user?.id === postData.author_id) {
 }
 ---
 
-<Layout title={postData.title}>
-  <div class="max-w-125 mx-auto px-4 py-12">
+<EditorLayout title={postData.title}>
+  {
+    isAuthor && session?.data?.session?.user?.id ? (
+      <PostDetail
+        client:load
+        postId={id}
+        userId={session.data.session.user.id}
+      />
+    ) : (
+      <PostActionBar client:load mode="view-only" />
+    )
+  }
+
+  <div class="py-12 space-y-6">
     <article class="space-y-6">
       {/* Title */}
       <h1
@@ -106,20 +121,6 @@ if (session?.data?.session?.user?.id === postData.author_id) {
           {postData.content}
         </p>
       </div>
-
-      {/* Edit button for author */}
-      {
-        isAuthor && (
-          <div class="pt-8">
-            <a
-              href={`/write?id=${id}`}
-              class="inline-flex items-center gap-2 bg-[#da5700] text-white px-6 py-3 rounded-[100px] font-['Exposure[-20]:Regular',sans-serif] text-base hover:bg-[#c44f00] transition-colors"
-            >
-              Edit Post
-            </a>
-          </div>
-        )
-      }
     </article>
   </div>
-</Layout>
+</EditorLayout>

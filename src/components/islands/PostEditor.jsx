@@ -110,7 +110,8 @@ export default function PostEditor({ mode = "create", postId = null }) {
           setSaving(false);
           return;
         }
-        window.location.href = `/post/${data.id}`;
+        // Redirect to user's profile page after creating post
+        window.location.href = `/profile/${userId}`;
       }
     } catch (err) {
       console.error("Publish error:", err);

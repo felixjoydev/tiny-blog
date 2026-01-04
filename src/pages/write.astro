@@ -1,11 +1,49 @@
 ---
 import EditorLayout from "../layouts/EditorLayout.astro";
 import PostEditor from "../components/islands/PostEditor.jsx";
+import { createSupabaseServerClient } from "../lib/supabaseServer";
+
+export const prerender = false;
+
+// Check auth server-side
+const supabase = createSupabaseServerClient(Astro.cookies);
+const {
+  data: { session },
+} = await supabase.auth.getSession();
+
+if (!session?.user) {
+  return Astro.redirect("/auth");
+}
+
+// Check if user is onboarded
+const { data: profile } = await supabase
+  .from("profiles")
+  .select("display_name, bio")
+  .eq("id", session.user.id)
+  .single();
+
+const isOnboarded = Boolean(profile?.display_name && profile?.bio);
+if (!isOnboarded) {
+  return Astro.redirect("/accounts/setup");
+}
 
 // Check if we're editing an existing post
 const postIdParam = Astro.url.searchParams.get("id");
 const postId = postIdParam || null;
 const mode = postId ? "edit" : "create";
+
+// If editing, verify ownership
+if (postId) {
+  const { data: post } = await supabase
+    .from("posts")
+    .select("author_id")
+    .eq("id", postId)
+    .single();
+
+  if (!post || post.author_id !== session.user.id) {
+    return Astro.redirect("/");
+  }
+}
 ---
 
 <EditorLayout
