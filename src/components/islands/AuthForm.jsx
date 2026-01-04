@@ -74,7 +74,14 @@ export default function AuthForm() {
 			if (data.session) {
 				// Small delay to ensure session cookies are set
 				setTimeout(() => {
-					window.location.href = '/accounts/setup';
+					// Check for return URL from comment auth flow
+					const returnUrl = sessionStorage.getItem('returnUrl');
+					if (returnUrl) {
+						sessionStorage.removeItem('returnUrl');
+						window.location.href = returnUrl;
+					} else {
+						window.location.href = '/accounts/setup';
+					}
 				}, 100);
 			}
 		} catch (err) {
@@ -111,6 +118,8 @@ export default function AuthForm() {
 			if (data.session) {
 				// Small delay to ensure session cookies are set
 				setTimeout(() => {
+					// Always go to setup for new signups
+					// returnUrl will be checked after setup completes
 					window.location.href = '/accounts/setup';
 				}, 100);
 			}

@@ -2,6 +2,7 @@
 import EditorLayout from "../../layouts/EditorLayout.astro";
 import PostDetail from "../../components/islands/PostDetail";
 import PostActionBar from "../../components/islands/PostActionBar";
+import CommentsSection from "../../components/comment/CommentsSection";
 import { createSupabaseServerClient } from "../../lib/supabaseServer";
 import { getPostById } from "../../lib/posts";
 
@@ -122,5 +123,15 @@ if (session?.data?.session?.user?.id === postData.author_id) {
         </p>
       </div>
     </article>
+
+    {/* Comments section with 48px spacing */}
+    <div class="pt-12">
+      <CommentsSection
+        client:load
+        postId={id}
+        postAuthorId={postData.author_id}
+        currentUserId={session?.data?.session?.user?.id || null}
+      />
+    </div>
   </div>
 </EditorLayout>

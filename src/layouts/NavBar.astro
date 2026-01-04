@@ -3,7 +3,10 @@ import NavActions from "../components/islands/NavActions.jsx";
 import logo from "../assets/icons/tiny-logo.svg";
 ---
 
-<nav class="flex items-center justify-between px-[70px] py-4 bg-[#FFFAEF]">
+<nav
+  class="fixed top-0 left-0 right-0 flex items-center justify-between px-[70px] bg-[#FFFAEF] z-50"
+  style="height: var(--nav-height);"
+>
   <a href="/" class="flex items-center">
     <img src={logo.src} alt="Tiny Blog" class="h-[55px] w-[50px]" />
   </a>

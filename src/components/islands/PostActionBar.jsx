@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabaseClient";
+import tinyLogo from "../../assets/icons/tiny-logo.svg";
+import writeIcon from "../../assets/icons/write.svg";
 
 /**
  * PostActionBar - Navigation bar for post creation/editing
@@ -20,33 +22,81 @@ export default function PostActionBar({
   onDelete 
 }) {
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+  const avatarRef = useRef(null);
 
   useEffect(() => {
     const getCurrentUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setCurrentUserId(user.id);
+        // Fetch profile for view-only mode
+        if (mode === "view-only") {
+          fetchProfile(user.id);
+        }
       }
     };
     getCurrentUser();
-  }, []);
+  }, [mode]);
+
+  useEffect(() => {
+    // Handle click outside to close dropdown
+    function handleClickOutside(event) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        avatarRef.current &&
+        !avatarRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    }
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
+
+  const fetchProfile = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_path')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+      setProfile(data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setShowDropdown(false);
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   const handleClose = () => {
     if (mode === "view-only") {
-      // Go back to previous page and restore scroll position
-      const scrollPosition = sessionStorage.getItem('scrollPosition');
-      const scrollTimestamp = sessionStorage.getItem('scrollTimestamp');
-      
-      // Only restore if saved within last 5 minutes (to avoid stale positions)
-      if (scrollPosition && scrollTimestamp) {
-        const timeDiff = Date.now() - parseInt(scrollTimestamp);
-        if (timeDiff < 5 * 60 * 1000) {
-          // Use history.back() and restore scroll after page loads
-          sessionStorage.setItem('restoreScroll', scrollPosition);
-        }
+      // In view-only mode, navigate to user's profile instead of going back
+      if (currentUserId) {
+        window.location.href = `/profile/${currentUserId}`;
+      } else {
+        // If no user is logged in, go to home page
+        window.location.href = '/';
       }
-      
-      window.history.back();
     } else if (mode === "view-own-post" && currentUserId) {
       // Mark scroll position for restoration when navigating to profile
       const scrollPosition = sessionStorage.getItem('scrollPosition');
@@ -72,33 +122,109 @@ export default function PostActionBar({
       onEdit();
     }
   };
+
+  const getAvatarContent = () => {
+    if (profile?.avatar_path) {
+      const { data } = supabase.storage.from('avatars').getPublicUrl(profile.avatar_path);
+      return (
+        <img
+          src={data.publicUrl}
+          alt={profile.display_name || 'User avatar'}
+          className="w-full h-full object-cover"
+        />
+      );
+    }
+
+    const firstLetter = profile?.display_name?.charAt(0).toUpperCase() || 'U';
+    return (
+      <span className="text-white text-[18px] font-['Exposure[-40]:Regular',sans-serif]">
+        {firstLetter}
+      </span>
+    );
+  };
   
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-[#FFF1D5] border-b border-[rgba(63,51,28,0.1)] z-50">
-      <div className="flex items-center justify-between px-[70px] py-3">
-        {/* Left: Close button (all modes) */}
-        <button
-          onClick={handleClose}
-          className="bg-[rgba(63,51,28,0.1)] flex gap-[10px] items-center justify-center px-4 py-[10px] rounded-[100px] hover:bg-[rgba(63,51,28,0.15)] transition-colors"
-        >
-          <svg 
-            className="w-4 h-4" 
-            viewBox="0 0 16 16" 
-            fill="none"
+    <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-[70px] bg-[#FFF1D5] z-50" style={{ height: 'var(--nav-height)' }}>
+        {/* Left: Logo (view-only) or Close button (other modes) */}
+        {mode === "view-only" ? (
+          <a
+            href="/"
+            className="hover:opacity-80 transition-opacity"
+            aria-label="Go to home"
           >
-            <path 
-              d="M2.34315 2.34315C2.73367 1.95262 3.36684 1.95262 3.75736 2.34315L8 6.58579L12.2426 2.34315C12.6332 1.95262 13.2663 1.95262 13.6569 2.34315C14.0474 2.73367 14.0474 3.36684 13.6569 3.75736L9.41421 8L13.6569 12.2426C14.0474 12.6332 14.0474 13.2663 13.6569 13.6569C13.2663 14.0474 12.6332 14.0474 12.2426 13.6569L8 9.41421L3.75736 13.6569C3.36684 14.0474 2.73367 14.0474 2.34315 13.6569C1.95262 13.2663 1.95262 12.6332 2.34315 12.2426L6.58579 8L2.34315 3.75736C1.95262 3.36684 1.95262 2.73367 2.34315 2.34315Z" 
-              fill="#3f331c"
-            />
-          </svg>
-          <span className="font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-[16px] tracking-[0.48px]">
-            Close
-          </span>
-        </button>
+            <img src={tinyLogo.src} alt="Tiny" className="h-[55px] w-[50px]" />
+          </a>
+        ) : (
+          <button
+            onClick={handleClose}
+            className="bg-[rgba(63,51,28,0.1)] flex gap-[10px] items-center justify-center px-4 py-[10px] rounded-[100px] hover:bg-[rgba(63,51,28,0.15)] transition-colors"
+          >
+            <svg 
+              className="w-4 h-4" 
+              viewBox="0 0 16 16" 
+              fill="none"
+            >
+              <path 
+                d="M2.34315 2.34315C2.73367 1.95262 3.36684 1.95262 3.75736 2.34315L8 6.58579L12.2426 2.34315C12.6332 1.95262 13.2663 1.95262 13.6569 2.34315C14.0474 2.73367 14.0474 3.36684 13.6569 3.75736L9.41421 8L13.6569 12.2426C14.0474 12.6332 14.0474 13.2663 13.6569 13.6569C13.2663 14.0474 12.6332 14.0474 12.2426 13.6569L8 9.41421L3.75736 13.6569C3.36684 14.0474 2.73367 14.0474 2.34315 13.6569C1.95262 13.2663 1.95262 12.6332 2.34315 12.2426L6.58579 8L2.34315 3.75736C1.95262 3.36684 1.95262 2.73367 2.34315 2.34315Z" 
+                fill="#3f331c"
+              />
+            </svg>
+            <span className="font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-[16px] tracking-[0.48px]">
+              Close
+            </span>
+          </button>
+        )}
 
         {/* Right: Action buttons based on mode */}
         <div className="flex gap-3">
+          {mode === "view-only" && (
+            <div className="flex items-center gap-2 relative">
+              <a
+                href="/write"
+                className="bg-[#da5700] text-white px-4 py-2.5 h-10 rounded-full text-[16px] font-['Exposure[-40]:Regular',sans-serif] tracking-[0.48px] hover:bg-[#c24e00] transition-colors flex items-center gap-2.5"
+              >
+                <img src={writeIcon.src} alt="" className="w-4 h-4" />
+                Write a post
+              </a>
+
+              <button
+                ref={avatarRef}
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="w-10 h-10 rounded-full bg-[#3f331c] flex items-center justify-center overflow-hidden hover:ring-2 hover:ring-[#da5700] transition-all cursor-pointer"
+                aria-label="User menu"
+              >
+                {getAvatarContent()}
+              </button>
+
+              {showDropdown && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-100"
+                >
+                  <a
+                    href={`/profile/${currentUserId}`}
+                    className="block px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors font-['Exposure[-40]:Regular',sans-serif]"
+                  >
+                    Profile
+                  </a>
+                  <a
+                    href="/accounts"
+                    className="block px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors font-['Exposure[-40]:Regular',sans-serif]"
+                  >
+                    Settings
+                  </a>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors font-['Exposure[-40]:Regular',sans-serif]"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           {mode === "create" && (
             <button
               onClick={onPublish}
@@ -187,7 +313,6 @@ export default function PostActionBar({
 
           {/* view-only mode: no action buttons */}
         </div>
-      </div>
     </nav>
   );
 }

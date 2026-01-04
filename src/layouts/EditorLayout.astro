@@ -16,13 +16,11 @@ const { title = "Write - Tiny Blog" } = Astro.props;
     <title>{title}</title>
   </head>
   <body class="bg-[#FFF1D5] min-h-screen">
-    <!-- Nav placeholder - PostActionBar will render here via island -->
-    <nav class="w-full h-[60px]">
-      <!-- Empty placeholder - actual nav comes from PostEditor island -->
-    </nav>
-
     <!-- Content area with 500px max width, centered -->
-    <main class="w-full max-w-[500px] mx-auto px-4">
+    <main
+      class="w-full max-w-[500px] mx-auto px-4"
+      style="padding-top: var(--nav-height);"
+    >
       <slot />
     </main>
   </body>

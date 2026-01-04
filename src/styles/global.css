@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+	--nav-height: 75px;
+}
+
 /* Exposure Font Family */
 @font-face {
 	font-family: 'Exposure[-40]:Regular';

@@ -14,7 +14,10 @@ import "../styles/global.css";
   </head>
   <body class="bg-[#FFFAEF] flex flex-col min-h-screen">
     <NavBar />
-    <main class="flex-1 w-full max-w-[500px] mx-auto px-4">
+    <main
+      class="flex-1 w-full max-w-[500px] mx-auto px-4"
+      style="padding-top: var(--nav-height);"
+    >
       <slot />
     </main>
     <footer class="py-6 px-[70px] bg-[#FFFAEF]">

@@ -138,8 +138,15 @@ export default function AccountSetup({ profile, userId }) {
 				return;
 			}
 
-			// Redirect to profile page
-			window.location.href = `/profile/${userId}`;
+			// Check for return URL from comment auth flow
+			const returnUrl = sessionStorage.getItem('returnUrl');
+			if (returnUrl) {
+				sessionStorage.removeItem('returnUrl');
+				window.location.href = returnUrl;
+			} else {
+				// Default: redirect to profile page
+				window.location.href = `/profile/${userId}`;
+			}
 		} catch (err) {
 			console.error('Unexpected error:', err);
 			setError('An unexpected error occurred. Please try again.');
