@@ -1,0 +1,15 @@
+---
+import EditorLayout from "../layouts/EditorLayout.astro";
+import PostEditor from "../components/islands/PostEditor.jsx";
+
+// Check if we're editing an existing post
+const postIdParam = Astro.url.searchParams.get("id");
+const postId = postIdParam || null;
+const mode = postId ? "edit" : "create";
+---
+
+<EditorLayout
+  title={mode === "edit" ? "Edit Post - Tiny Blog" : "Write - Tiny Blog"}
+>
+  <PostEditor mode={mode} postId={postId} client:load />
+</EditorLayout>

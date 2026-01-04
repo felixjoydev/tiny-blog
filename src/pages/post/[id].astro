@@ -1,0 +1,125 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { supabase } from "../../lib/supabaseClient";
+import { getPostById } from "../../lib/posts";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/");
+}
+
+const { data: post, error } = await getPostById(id);
+
+if (error || !post) {
+  return Astro.redirect("/");
+}
+
+// Type the post object
+const postData = post as {
+  id: string;
+  title: string;
+  subtitle?: string;
+  content: string;
+  author_id: string;
+  created_at: string;
+  profiles?: {
+    id: string;
+    display_name: string;
+    avatar_path?: string;
+  };
+};
+
+// Check if current user is the author
+let isAuthor = false;
+const session = await supabase.auth.getSession();
+if (session?.data?.session?.user?.id === postData.author_id) {
+  isAuthor = true;
+}
+---
+
+<Layout title={postData.title}>
+  <div class="max-w-125 mx-auto px-4 py-12">
+    <article class="space-y-6">
+      {/* Title */}
+      <h1
+        class="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-5xl tracking-tight"
+      >
+        {postData.title}
+      </h1>
+
+      {/* Subtitle */}
+      {
+        postData.subtitle && (
+          <h2 class="font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-2xl">
+            {postData.subtitle}
+          </h2>
+        )
+      }
+
+      {/* Author info */}
+      <div
+        class="flex items-center gap-3 py-4 border-y border-[rgba(63,51,28,0.1)]"
+      >
+        {
+          postData.profiles?.avatar_path ? (
+            <img
+              src={`${import.meta.env.PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${postData.profiles.avatar_path}`}
+              alt={postData.profiles.display_name}
+              class="w-10 h-10 rounded-full object-cover"
+            />
+          ) : (
+            <div class="w-10 h-10 rounded-full bg-[#f4edde] flex items-center justify-center">
+              <span class="font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-lg">
+                {postData.profiles?.display_name?.[0]?.toUpperCase() || "?"}
+              </span>
+            </div>
+          )
+        }
+        <div>
+          <p
+            class="font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-base"
+          >
+            {postData.profiles?.display_name || "Anonymous"}
+          </p>
+          <p
+            class="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-sm"
+          >
+            {
+              new Date(postData.created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            }
+          </p>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div class="prose prose-lg max-w-none">
+        <p
+          class="font-['Exposure[-10]:Regular',sans-serif] text-[#3f331c] text-lg leading-relaxed whitespace-pre-wrap"
+        >
+          {postData.content}
+        </p>
+      </div>
+
+      {/* Edit button for author */}
+      {
+        isAuthor && (
+          <div class="pt-8">
+            <a
+              href={`/write?id=${id}`}
+              class="inline-flex items-center gap-2 bg-[#da5700] text-white px-6 py-3 rounded-[100px] font-['Exposure[-20]:Regular',sans-serif] text-base hover:bg-[#c44f00] transition-colors"
+            >
+              Edit Post
+            </a>
+          </div>
+        )
+      }
+    </article>
+  </div>
+</Layout>

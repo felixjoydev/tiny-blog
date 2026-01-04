@@ -1,0 +1,29 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "Write - Tiny Blog" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-[#FFF1D5] min-h-screen">
+    <!-- Nav placeholder - PostActionBar will render here via island -->
+    <nav class="w-full h-[60px]">
+      <!-- Empty placeholder - actual nav comes from PostEditor island -->
+    </nav>
+
+    <!-- Content area with 500px max width, centered -->
+    <main class="w-full max-w-[500px] mx-auto px-4">
+      <slot />
+    </main>
+  </body>
+</html>
