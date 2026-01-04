@@ -21,3 +21,26 @@ export function isProfileComplete(profile) {
 		profile.bio.trim() !== ''
 	);
 }
+
+/**
+ * Update user profile
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabase - Supabase client instance
+ * @param {string} userId - User ID
+ * @param {Object} updates - Profile updates (display_name, bio, avatar_path)
+ * @returns {Promise<{data: Object|null, error: Error|null}>}
+ */
+export async function updateProfile(supabase, userId, updates) {
+	try {
+		const { data, error } = await supabase
+			.from('profiles')
+			.update(updates)
+			.eq('id', userId)
+			.select()
+			.single();
+
+		return { data, error };
+	} catch (error) {
+		console.error('Error updating profile:', error);
+		return { data: null, error };
+	}
+}

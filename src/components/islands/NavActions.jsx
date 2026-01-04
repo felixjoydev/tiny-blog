@@ -174,7 +174,14 @@ export default function NavActions() {
 						</a>
 					)}
 					<a
-						href="/settings"
+						href="/accounts"
+						onClick={(e) => {
+							e.preventDefault();
+							// Save current scroll position and page
+							sessionStorage.setItem('settings_scroll', window.scrollY.toString());
+							sessionStorage.setItem('settings_referrer', window.location.pathname);
+							window.location.href = '/accounts';
+						}}
 						className="block px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors font-['Exposure[-40]:Regular',sans-serif] rounded"
 					>
 						Settings

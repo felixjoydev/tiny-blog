@@ -1,0 +1,48 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { createSupabaseServerClient } from "../../lib/supabaseServer";
+import AccountSettings from "../../components/islands/AccountSettings";
+
+export const prerender = false;
+
+const supabase = createSupabaseServerClient(Astro.cookies);
+
+// Check session
+const {
+  data: { session },
+  error: sessionError,
+} = await supabase.auth.getSession();
+
+if (sessionError || !session) {
+  return Astro.redirect("/auth", 302);
+}
+
+// Fetch user profile
+const { data: profile, error: profileError } = await supabase
+  .from("profiles")
+  .select("id, handle, display_name, bio, avatar_path, onboarded")
+  .eq("id", session.user.id)
+  .single();
+
+if (profileError || !profile) {
+  return Astro.redirect("/auth", 302);
+}
+
+// Check if user is onboarded
+if (!profile.onboarded) {
+  return Astro.redirect("/accounts/setup", 302);
+}
+---
+
+<Layout title="Account Settings - Tiny Blog">
+  <AccountSettings
+    client:load
+    profileId={profile.id}
+    initialProfile={{
+      handle: profile.handle,
+      display_name: profile.display_name,
+      bio: profile.bio,
+      avatar_path: profile.avatar_path,
+    }}
+  />
+</Layout>
