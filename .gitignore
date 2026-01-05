@@ -24,3 +24,5 @@ pnpm-debug.log*
 .idea/
 
 .github/instructions
+# Local Netlify folder
+.netlify
