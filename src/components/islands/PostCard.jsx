@@ -81,20 +81,20 @@ export default function PostCard({
       }}
     >
       {/* Title */}
-      <h3 className="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-2xl tracking-tight mb-2 break-words">
+      <h3 className="type-h3 text-[#3f331c] mb-2 break-words">
         {truncateTitle(title)}
       </h3>
 
       {/* Subtitle */}
       {subtitle && (
-        <p className="font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-lg mb-3 break-words">
+        <p className="type-body-lg text-[#786237] mb-3 break-words">
           {truncateSubtitle(subtitle)}
         </p>
       )}
 
       {/* Date and Comment Count */}
       <div className="flex items-center gap-4 mb-4">
-        <span className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-sm">
+        <span className="type-label-strong text-[#786237]">
           {formatDate(createdAt)}
         </span>
         <div className="flex items-center gap-1.5">
@@ -119,14 +119,14 @@ export default function PostCard({
               </clipPath>
             </defs>
           </svg>
-          <span className="font-['Exposure[-10]:Regular',sans-serif] text-[#3f331c] text-sm">
+          <span className="type-label-strong text-[#3f331c]">
             {commentCount}
           </span>
         </div>
       </div>
 
       {/* Content snippet */}
-      <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#3f331c] text-base leading-relaxed mb-4 break-words">
+      <p className="type-body text-[#3f331c] mb-4 break-words">
         {truncateContent(content)}
       </p>
 

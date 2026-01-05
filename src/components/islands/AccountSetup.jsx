@@ -274,7 +274,7 @@ export default function AccountSetup({ profile, userId }) {
 			const firstLetter = displayName.trim().charAt(0).toUpperCase();
 			return (
 				<div className="w-16 h-16 rounded-[20px] bg-[#3f331c] flex items-center justify-center">
-					<span className="text-white text-[24px] font-['Exposure[-40]:Regular',sans-serif]">
+						<span className="text-white type-h3">
 						{firstLetter}
 					</span>
 				</div>
@@ -298,10 +298,10 @@ export default function AccountSetup({ profile, userId }) {
 						<img src={logo.src} alt="Tiny Logo" className="w-full h-full" />
 					</div>
 					<div className="flex flex-col gap-[3px] items-center w-full">
-						<p className="font-['Exposure[-40]:Regular',sans-serif] leading-normal text-[#3f331c] text-[20px] text-center tracking-[0.6px] w-full">
+						<p className="type-body-lg text-[#3f331c] text-center w-full">
 							Welcome to Tiny
 						</p>
-						<p className="font-['Exposure[-10]:Regular',sans-serif] leading-[24px] text-[#786237] text-[16px] tracking-[0.32px] text-center">
+						<p className="type-body text-[#786237] text-center">
 							Simple beautiful blogs
 						</p>
 					</div>
@@ -323,7 +323,7 @@ export default function AccountSetup({ profile, userId }) {
 						htmlFor="avatar-upload"
 						className="bg-[#3f331c] flex items-center justify-center px-2 py-2 rounded-full w-full cursor-pointer hover:bg-[#2f2715] transition-colors"
 					>
-						<span className="font-['Exposure[-40]:Regular',sans-serif] leading-normal text-[12px] text-white tracking-[0.36px]">
+						<span className="type-meta-strong text-white">
 							Upload your avatar
 						</span>
 					</label>
@@ -338,18 +338,18 @@ export default function AccountSetup({ profile, userId }) {
 						value={displayName}
 						onChange={(e) => setDisplayName(e.target.value)}
 						disabled={uploading}
-						className={`bg-[#f4edde] h-10 px-2.5 py-2.5 rounded-lg w-full font-['Exposure[-10]:Regular',sans-serif] text-[14px] border-none outline-none ${
+						className={`bg-[#f4edde] h-10 px-2.5 py-2.5 rounded-lg w-full type-label-plain border-none outline-none ${
 							displayName ? 'text-[#3f331c]' : 'text-[#3f331c] opacity-50 placeholder:text-[#3f331c] placeholder:opacity-50'
 						}`}
 					/>
 
 					{/* Handle Input */}
 					<div className="flex flex-col gap-1 w-full">
-						<p className="font-['Exposure[-10]:Regular',sans-serif] text-[11px] text-[#786237] px-1">
+						<p className="type-meta-plain text-[#786237] px-1">
 							Your handle cannot be changed later. Choose carefully!
 						</p>
 						<div className="relative w-full">
-							<span className="absolute left-2.5 top-1/2 -translate-y-1/2 font-['Exposure[-10]:Regular',sans-serif] text-[14px] text-[#3f331c] pointer-events-none">
+							<span className="absolute left-2.5 top-1/2 -translate-y-1/2 type-label-plain text-[#3f331c] pointer-events-none">
 								@
 							</span>
 							<input
@@ -358,23 +358,23 @@ export default function AccountSetup({ profile, userId }) {
 								value={handle}
 								onChange={(e) => setHandle(e.target.value)}
 								disabled={uploading}
-								className={`bg-[#f4edde] h-10 pl-6 pr-2.5 py-2.5 rounded-lg w-full font-['Exposure[-10]:Regular',sans-serif] text-[14px] border-none outline-none ${
+								className={`bg-[#f4edde] h-10 pl-6 pr-2.5 py-2.5 rounded-lg w-full type-label-plain border-none outline-none ${
 									handle ? 'text-[#3f331c]' : 'text-[#3f331c] opacity-50 placeholder:text-[#3f331c] placeholder:opacity-50'
 								}`}
 							/>
 							{checkingHandle && (
-								<span className="absolute right-2.5 top-1/2 -translate-y-1/2 font-['Exposure[-10]:Regular',sans-serif] text-[10px] text-[#786237]">
+								<span className="absolute right-2.5 top-1/2 -translate-y-1/2 type-meta-plain text-[#786237]">
 									Checking...
 								</span>
 							)}
 						</div>
 						{handleError && (
-							<p className="text-[#B42018] font-['Exposure[-10]:Regular',sans-serif] text-[11px] px-1">
+							<p className="text-[#B42018] type-meta-plain px-1">
 								{handleError}
 							</p>
 						)}
 						{handle && !handleError && !checkingHandle && (
-							<p className="text-[#4A7C59] font-['Exposure[-10]:Regular',sans-serif] text-[11px] px-1">
+							<p className="text-[#4A7C59] type-meta-plain px-1">
 								✓ Available
 							</p>
 						)}
@@ -387,7 +387,7 @@ export default function AccountSetup({ profile, userId }) {
 						onChange={(e) => setBio(e.target.value)}
 						disabled={uploading}
 						rows={5}
-						className={`bg-[#f4edde] h-[124px] px-2.5 py-2.5 rounded-lg w-full font-['Exposure[-10]:Regular',sans-serif] text-[14px] border-none outline-none resize-none ${
+						className={`bg-[#f4edde] h-[124px] px-2.5 py-2.5 rounded-lg w-full type-label-plain border-none outline-none resize-none ${
 							bio ? 'text-[#3f331c]' : 'text-[#3f331c] opacity-50 placeholder:text-[#3f331c] placeholder:opacity-50'
 						}`}
 					/>
@@ -395,7 +395,7 @@ export default function AccountSetup({ profile, userId }) {
 
 				{/* Error Message */}
 				{error && (
-					<p className="text-[#B42018] text-center font-['Exposure[-10]:Regular',sans-serif] text-[0.75rem] w-full">
+					<p className="text-[#B42018] text-center type-meta-plain w-full">
 						{error}
 					</p>
 				)}
@@ -408,7 +408,7 @@ export default function AccountSetup({ profile, userId }) {
 						uploading || !isFormValid() ? 'opacity-50 cursor-not-allowed' : 'opacity-100 hover:bg-[#c24e00]'
 					}`}
 				>
-					<span className="font-['Exposure[-40]:Regular',sans-serif] leading-normal text-[16px] text-white tracking-[0.48px]">
+					<span className="type-label text-white">
 						{uploading ? 'Setting up...' : 'Get started'}
 					</span>
 				</button>

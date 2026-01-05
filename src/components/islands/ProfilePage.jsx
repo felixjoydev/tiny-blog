@@ -83,7 +83,7 @@ export default function ProfilePage({ profileId, initialProfile }) {
           />
         ) : (
           <div className="w-24 h-24 rounded-full bg-[#f4edde] flex items-center justify-center border-2 border-[rgba(63,51,28,0.1)]">
-            <span className="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-3xl">
+            <span className="type-display-1 text-[#3f331c]">
               {profile?.display_name?.[0]?.toUpperCase() || "?"}
             </span>
           </div>
@@ -91,11 +91,11 @@ export default function ProfilePage({ profileId, initialProfile }) {
 
         {/* Name and Bio */}
         <div className="text-center">
-          <h1 className="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-4xl tracking-tight mb-2">
+          <h1 className="type-display-2 text-[#3f331c] mb-2">
             {profile?.display_name || "User"}
           </h1>
           {profile?.bio && (
-            <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-base max-w-md">
+            <p className="type-body text-[#786237] max-w-md">
               {profile.bio}
             </p>
           )}
@@ -126,7 +126,7 @@ export default function ProfilePage({ profileId, initialProfile }) {
         </div>
       ) : error ? (
         <div className="text-center py-12">
-          <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#B42018] text-base">
+          <p className="type-body text-[#B42018]">
             {error}
           </p>
         </div>
@@ -141,11 +141,11 @@ export default function ProfilePage({ profileId, initialProfile }) {
             />
           </div>
           
-          <h2 className="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-2xl mb-2 text-center">
+          <h2 className="type-h3 text-[#3f331c] mb-2 text-center">
             No Post yet
           </h2>
           
-          <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-base mb-6 text-center max-w-sm">
+          <p className="type-body text-[#786237] mb-6 text-center max-w-sm">
             {isOwner 
               ? "Write something memorable"
               : `${profile?.display_name || "This user"} hasn't posted anything yet`
@@ -155,7 +155,7 @@ export default function ProfilePage({ profileId, initialProfile }) {
           {isOwner && (
             <a
               href="/write"
-              className="flex items-center justify-center gap-2 bg-[#da5700] text-white px-6 py-3 rounded-[100px] font-['Exposure[-20]:Regular',sans-serif] text-base hover:bg-[#c44f00] transition-colors w-full max-w-sm"
+              className="flex items-center justify-center gap-2 bg-[#da5700] text-white px-6 py-3 rounded-[100px] type-label hover:bg-[#c44f00] transition-colors w-full max-w-sm"
             >
               <img src="/icons/write.svg" alt="" className="w-4 h-4" />
               Write a post

@@ -130,17 +130,17 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
             <div className="flex flex-col gap-1">
               <a 
                 href={authorProfileUrl}
-                className="font-['Exposure[-20]:Regular',sans-serif] text-[#3F331C] text-[0.875rem] tracking-[0.026rem] hover:underline"
+                className="type-label text-[#3F331C] hover:underline"
               >
                 {comment.profiles?.display_name || 'Unknown User'}
               </a>
               <div className="flex items-center gap-2">
-                <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-[0.75rem] tracking-[0.022rem]">
+                <p className="type-meta-plain text-[#786237]">
                   {formatDate(comment.created_at)}
                 </p>
                 {isEdited && (
                   <span 
-                    className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-[0.75rem] tracking-[0.022rem] opacity-70"
+                    className="type-meta-plain text-[#786237] opacity-70"
                     aria-label="This comment has been edited"
                   >
                     (edited)
@@ -177,7 +177,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
                         setIsEditing(true);
                         setShowMenu(false);
                       }}
-                      className="font-['Exposure[-10]:Regular',sans-serif] w-full px-4 py-2 text-left text-[#3F331C] hover:bg-[#FAECD2] text-[0.875rem] rounded"
+                      className="type-label-plain w-full px-4 py-2 text-left text-[#3F331C] hover:bg-[#FAECD2] rounded"
                       role="menuitem"
                     >
                       Edit
@@ -189,7 +189,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
                         setShowMenu(false);
                         handleDelete();
                       }}
-                      className="font-['Exposure[-10]:Regular',sans-serif] w-full px-4 py-2 text-left text-[#DA5700] hover:bg-[#FAECD2] text-[0.875rem] rounded"
+                      className="type-label-plain w-full px-4 py-2 text-left text-[#DA5700] hover:bg-[#FAECD2] rounded"
                       role="menuitem"
                     >
                       Delete
@@ -207,14 +207,14 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="w-full min-h-16 p-3 rounded-lg bg-[#F2E1C0] border-none outline-none resize-none font-['Exposure[-10]:Regular',sans-serif] text-[0.875rem] tracking-[0.018rem] text-[#3F331C]"
+              className="w-full min-h-16 p-3 rounded-lg bg-[#F2E1C0] border-none outline-none resize-none type-label-plain text-[#3F331C]"
               aria-label="Edit comment"
             />
             <div className="flex gap-2 mt-2">
               <button
                 onClick={handleSaveEdit}
                 disabled={!editContent.trim() || isSaving}
-                className="font-['Exposure[-10]:Regular',sans-serif] px-4 py-1.5 rounded-lg bg-[#DA5700] text-white text-[0.875rem] disabled:opacity-30"
+                className="type-label-plain px-4 py-1.5 rounded-lg bg-[#DA5700] text-white disabled:opacity-30"
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
@@ -223,7 +223,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
                   setIsEditing(false);
                   setEditContent(comment.content);
                 }}
-                className="font-['Exposure[-10]:Regular',sans-serif] px-4 py-1.5 rounded-lg bg-[#F2E1C0] text-[#3F331C] text-[0.875rem]"
+                className="type-label-plain px-4 py-1.5 rounded-lg bg-[#F2E1C0] text-[#3F331C]"
               >
                 Cancel
               </button>
@@ -231,7 +231,7 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
           </div>
         ) : (
           <div>
-            <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#3F331C] text-[0.875rem] tracking-[0.018rem] leading-5">
+            <p className="type-label-plain text-[#3F331C]">
               {displayContent}
               {needsTruncation && !isExpanded && (
                 <button

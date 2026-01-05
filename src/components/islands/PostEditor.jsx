@@ -230,7 +230,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
           onClose={handleClose}
         />
         <div className="flex items-center justify-center min-h-[50vh]">
-          <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-lg">
+          <p className="type-body-lg text-[#786237]">
             Loading...
           </p>
         </div>
@@ -250,7 +250,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
       <div className="py-12">
         {error && (
           <div className="mb-6 p-4 bg-[#ffe5e5] border border-[#B42018] rounded-lg">
-            <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#B42018] text-sm">
+            <p className="type-label text-[#B42018]">
               {error}
             </p>
           </div>
@@ -266,8 +266,8 @@ export default function PostEditor({ mode = "create", postId = null }) {
             placeholder="Title"
             disabled={saving}
             rows={1}
-            className="w-full bg-transparent border-none outline-none font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-5xl placeholder:text-[#d4c7a8] tracking-tight resize-none leading-tight overflow-y-hidden"
-            style={{ minHeight: 'auto' }}
+            className="w-full bg-transparent border-none outline-none type-display-1 text-[#3f331c] placeholder:text-[#d4c7a8] resize-none overflow-y-hidden"
+            style={{ minHeight: 'auto', lineHeight: '1.2' }}
             onInput={(e) => {
               e.target.style.height = 'auto';
               e.target.style.height = e.target.scrollHeight + 'px';
@@ -283,8 +283,8 @@ export default function PostEditor({ mode = "create", postId = null }) {
             placeholder="Subtitle"
             disabled={saving}
             rows={1}
-            className="w-full bg-transparent border-none outline-none font-['Exposure[-20]:Regular',sans-serif] text-[#786237] text-2xl placeholder:text-[#d4c7a8] tracking-tight resize-none leading-tight overflow-y-hidden"
-            style={{ minHeight: 'auto' }}
+            className="w-full bg-transparent border-none outline-none type-h3 text-[#786237] placeholder:text-[#d4c7a8] resize-none overflow-y-hidden"
+            style={{ minHeight: 'auto', lineHeight: '1.2' }}
             onInput={(e) => {
               e.target.style.height = 'auto';
               e.target.style.height = e.target.scrollHeight + 'px';
@@ -299,7 +299,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
             placeholder="Start writing or type / for commands"
             disabled={saving}
             rows={15}
-            className="w-full bg-transparent border-none outline-none font-['Exposure[-10]:Regular',sans-serif] text-[#3f331c] text-lg placeholder:text-[#d4c7a8] leading-relaxed resize-none"
+            className="w-full bg-transparent border-none outline-none type-body-lg text-[#3f331c] placeholder:text-[#d4c7a8] resize-none"
           />
         </div>
       </div>

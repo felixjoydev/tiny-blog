@@ -183,7 +183,7 @@ export default function ProfileTimeline({ posts }) {
                   style={{ opacity: activeYear === year ? 1 : 0.5 }}
                 >
                   <span 
-                    className="font-['Exposure[-40]:Regular',sans-serif] text-xl tracking-tight transition-colors duration-300"
+                    className="type-body-lg transition-colors duration-300"
                     style={{ color: '#3F331C' }}
                   >
                     {year}
@@ -208,7 +208,7 @@ export default function ProfileTimeline({ posts }) {
                       style={{ opacity: activeYear === year && activeMonth === month ? 1 : 0.5 }}
                     >
                       <span 
-                        className="font-['Exposure[-20]:Regular',sans-serif] text-base transition-colors duration-300"
+                        className="type-label transition-colors duration-300"
                         style={{ color: '#3F331C' }}
                       >
                         {month}

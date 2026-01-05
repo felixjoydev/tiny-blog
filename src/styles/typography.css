@@ -1,0 +1,102 @@
+/**
+ * Typography System
+ * 
+ * Semantic utility classes for consistent typography across the app.
+ * Uses em units for scalable tracking and line-height.
+ * Colors are NOT set here - apply them contextually.
+ */
+
+@layer utilities {
+ .type-display-1 { /* 48 / Exposure 40 / 0.8px / lh 58 */
+    font-family: 'Exposure[-40]:Regular', sans-serif;
+    font-size: 3rem;
+    line-height: 3.625rem;
+    letter-spacing: 0.0166667em;
+  }
+
+  .type-display-2 { /* 32 / Exposure 40 / 0.8px / lh 38 */
+    font-family: 'Exposure[-40]:Regular', sans-serif;
+    font-size: 2rem;
+    line-height: 2.375rem;
+    letter-spacing: 0.025em;
+  }
+
+  .type-h3 { /* 24 / Exposure 20 / 0.4px / lh 28 */
+    font-family: 'Exposure[-20]:Regular', sans-serif;
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+    letter-spacing: 0.0166667em;
+  }
+
+  .type-body-lg { /* 18 / Exposure 10 / 0px / lh 26 */
+    font-family: 'Exposure[-10]:Regular', sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.625rem;
+    letter-spacing: 0;
+  }
+
+  .type-body { /* 16 / Exposure 10 / 0px / lh 24 */
+    font-family: 'Exposure[-10]:Regular', sans-serif;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    letter-spacing: 0;
+  }
+
+  .type-label { /* 14 / Exposure 20 / 0.4px / lh 18 */
+    font-family: 'Exposure[-20]:Regular', sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.125rem;
+    letter-spacing: 0.0285714em;
+  }
+
+  .type-meta { /* 12 / Exposure 20 / 0.4px / lh 16 */
+    font-family: 'Exposure[-20]:Regular', sans-serif;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0.0333333em;
+  }
+
+  .type-label-strong { /* 14 / Exposure 40 / 0.8px / lh 16 */
+    font-family: 'Exposure[-40]:Regular', sans-serif;
+    font-size: 0.875rem;
+    line-height: 1rem;
+    letter-spacing: 0.0571429em;
+  }
+
+  .type-meta-strong { /* 12 / Exposure 40 / 0.8px / lh 16 */
+    font-family: 'Exposure[-40]:Regular', sans-serif;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0.0666667em;
+  }
+  
+   .type-body-lg-tight { /* 18 / Exposure 20 / 0.4px / lh 22 */
+    font-family: 'Exposure[-20]:Regular', sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.375rem;
+    letter-spacing: 0.0222222em;
+  }
+
+ 
+  .type-label-plain { /* 14 / Exposure 10 / 0px / lh 18 */
+    font-family: 'Exposure[-10]:Regular', sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.125rem;
+    letter-spacing: 0;
+  }
+
+  .type-meta-plain { /* 12 / Exposure 10 / 0px / lh 16 */
+    font-family: 'Exposure[-10]:Regular', sans-serif;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0;
+  }
+
+    .type-body-tracked { /* 16 / Exposure 20 / 0.8px / lh 24 */
+    font-family: 'Exposure[-20]:Regular', sans-serif;
+    font-size: 1rem;              /* 16px */
+    line-height: 1.5rem;          /* 24px */
+    letter-spacing: 0.05em;       /* 0.8 / 16 */
+  }
+
+}

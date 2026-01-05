@@ -23,7 +23,7 @@ export default function CommentList({
   if (isLoading) {
     return (
       <div className="w-full py-8 text-center">
-        <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-[0.875rem]">
+        <p className="type-label-plain text-[#786237]">
           Loading comments...
         </p>
       </div>
@@ -44,10 +44,10 @@ export default function CommentList({
 
         {/* Empty state text */}
         <div className="flex flex-col gap-1 text-center">
-          <p className="font-['Exposure[-40]:Regular',sans-serif] text-[#3F331C] text-[1.25rem] tracking-[0.037rem]">
+          <p className="type-body-lg text-[#3F331C]">
             No comments yet
           </p>
-          <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-[1rem] tracking-[0.02rem] leading-6">
+          <p className="type-body text-[#786237]">
             Be the first one to comment
           </p>
         </div>

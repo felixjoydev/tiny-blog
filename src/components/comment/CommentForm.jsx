@@ -75,11 +75,11 @@ export default function CommentForm({ postId, currentUserId, onCommentAdded, onA
           onChange={(e) => setContent(e.target.value)}
           placeholder="Write your thoughts"
           aria-label="Write a comment"
-          className="w-full min-h-16 bg-transparent border-none outline-none resize-none font-['Exposure[-10]:Regular',sans-serif] text-[0.875rem] tracking-[0.018rem] text-[#3F331C] placeholder:text-[#3F331C] placeholder:opacity-50"
+          className="w-full min-h-16 bg-transparent border-none outline-none resize-none type-label-plain text-[#3F331C] placeholder:text-[#3F331C] placeholder:opacity-50"
         />
         
         {error && (
-          <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#DA5700] text-[0.75rem] mt-2" role="alert">
+          <p className="type-meta-plain text-[#DA5700] mt-2" role="alert">
             {error}
           </p>
         )}
@@ -89,7 +89,7 @@ export default function CommentForm({ postId, currentUserId, onCommentAdded, onA
             type="submit"
             disabled={!content.trim() || isSubmitting}
             aria-label="Submit comment"
-            className="inline-flex py-2 px-2.5 justify-center items-center gap-2.5 rounded-[6.25rem] bg-[#DA5700] font-['Exposure[-10]:Regular',sans-serif] text-white text-[0.875rem] tracking-[0.018rem] disabled:opacity-50"
+            className="inline-flex py-2 px-2.5 justify-center items-center gap-2.5 rounded-[6.25rem] bg-[#DA5700] type-label-plain text-white disabled:opacity-50"
           >
             {isSubmitting ? 'Posting...' : 'Respond'}
           </button>

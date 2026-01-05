@@ -213,7 +213,7 @@ export default function AccountSettings({ profileId, initialProfile }) {
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="text-[#3f331c] font-['Exposure[-20]:Regular',sans-serif] text-base hover:opacity-70 transition-opacity"
+            className="text-[#3f331c] type-label hover:opacity-70 transition-opacity"
           >
             Close
           </button>
@@ -222,7 +222,7 @@ export default function AccountSettings({ profileId, initialProfile }) {
           <button
             onClick={handleSave}
             disabled={!hasChanges || saving}
-            className="bg-[#da5700] text-white px-6 py-2.5 rounded-full font-['Exposure[-20]:Regular',sans-serif] text-base hover:bg-[#c24e00] transition-all disabled:cursor-not-allowed"
+            className="bg-[#da5700] text-white px-6 py-2.5 rounded-full type-label hover:bg-[#c24e00] transition-all disabled:cursor-not-allowed"
             style={{ opacity: hasChanges ? 1 : 0.5 }}
           >
             {saving ? 'Saving...' : 'Save'}
@@ -235,13 +235,13 @@ export default function AccountSettings({ profileId, initialProfile }) {
         className="max-w-125 mx-auto px-4 py-12"
         style={{ paddingTop: 'calc(var(--nav-height) + 3rem)' }}
       >
-        <h1 className="font-['Exposure[-40]:Regular',sans-serif] text-[#3f331c] text-4xl mb-8">
+        <h1 className="type-display-2 text-[#3f331c] mb-8">
           Account Settings
         </h1>
 
         {error && (
           <div className="mb-6 p-4 bg-[#ffe5e5] border border-[#B42018] rounded-lg">
-            <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#B42018] text-sm">
+            <p className="type-label text-[#B42018]">
               {error}
             </p>
           </div>
@@ -258,7 +258,7 @@ export default function AccountSettings({ profileId, initialProfile }) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-[#786237] text-6xl font-['Exposure[-40]:Regular',sans-serif]">
+                <span className="text-[#786237] type-display-1">
                   {displayName.charAt(0).toUpperCase() || 'U'}
                 </span>
               )}
@@ -274,20 +274,20 @@ export default function AccountSettings({ profileId, initialProfile }) {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-[#3f331c] text-white px-4 py-2 rounded-full font-['Exposure[-20]:Regular',sans-serif] text-sm hover:bg-[#2f2715] transition-colors"
+                className="bg-[#3f331c] text-white px-4 py-2 rounded-full type-label hover:bg-[#2f2715] transition-colors"
               >
                 Upload Avatar
               </button>
               {avatarUrl && (
                 <button
                   onClick={handleDeleteAvatar}
-                  className="bg-[#B42018] text-white px-4 py-2 rounded-full font-['Exposure[-20]:Regular',sans-serif] text-sm hover:bg-[#9a1c13] transition-colors"
+                  className="bg-[#B42018] text-white px-4 py-2 rounded-full type-label hover:bg-[#9a1c13] transition-colors"
                 >
                   Delete
                 </button>
               )}
             </div>
-            <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-xs text-center">
+            <p className="type-meta-plain text-[#786237] text-center">
               Recommended: Square image, at least 400×400px
               <br />
               Max size: 2MB • Formats: JPEG, PNG, WebP
@@ -298,7 +298,7 @@ export default function AccountSettings({ profileId, initialProfile }) {
           <div className="space-y-2">
             <label 
               htmlFor="displayName"
-              className="block font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-base"
+              className="block type-body text-[#3f331c]"
             >
               Display Name
             </label>
@@ -308,7 +308,7 @@ export default function AccountSettings({ profileId, initialProfile }) {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               maxLength={50}
-              className="w-full px-4 py-3 bg-white border border-[rgba(63,51,28,0.2)] rounded-lg font-['Exposure[-10]:Regular',sans-serif] text-[#3f331c] text-base focus:outline-none focus:border-[#da5700] transition-colors"
+              className="w-full px-4 py-3 bg-white border border-[rgba(63,51,28,0.2)] rounded-lg type-body text-[#3f331c] focus:outline-none focus:border-[#da5700] transition-colors"
               placeholder="Your display name"
             />
           </div>
@@ -317,12 +317,12 @@ export default function AccountSettings({ profileId, initialProfile }) {
           <div className="space-y-2">
             <label 
               htmlFor="handle"
-              className="block font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-base"
+              className="block type-body text-[#3f331c]"
             >
               Handle
             </label>
             <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-base">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 type-body text-[#786237]">
                 @
               </div>
               <input
@@ -330,11 +330,11 @@ export default function AccountSettings({ profileId, initialProfile }) {
                 type="text"
                 value={initialProfile.handle || ""}
                 disabled
-                className="w-full pl-8 pr-4 py-3 bg-[#f4edde] border border-[rgba(63,51,28,0.1)] rounded-lg font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-base cursor-not-allowed opacity-60"
+                className="w-full pl-8 pr-4 py-3 bg-[#f4edde] border border-[rgba(63,51,28,0.1)] rounded-lg type-body text-[#786237] cursor-not-allowed opacity-60"
                 placeholder="handle"
               />
             </div>
-            <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-xs">
+            <p className="type-meta-plain text-[#786237]">
               Handle cannot be changed at this time
             </p>
           </div>
@@ -343,7 +343,7 @@ export default function AccountSettings({ profileId, initialProfile }) {
           <div className="space-y-2">
             <label 
               htmlFor="bio"
-              className="block font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-base"
+              className="block type-body text-[#3f331c]"
             >
               Bio
             </label>
@@ -353,10 +353,10 @@ export default function AccountSettings({ profileId, initialProfile }) {
               onChange={(e) => setBio(e.target.value)}
               maxLength={160}
               rows={4}
-              className="w-full px-4 py-3 bg-white border border-[rgba(63,51,28,0.2)] rounded-lg font-['Exposure[-10]:Regular',sans-serif] text-[#3f331c] text-base focus:outline-none focus:border-[#da5700] transition-colors resize-none"
+              className="w-full px-4 py-3 bg-white border border-[rgba(63,51,28,0.2)] rounded-lg type-body text-[#3f331c] focus:outline-none focus:border-[#da5700] transition-colors resize-none"
               placeholder="Tell us about yourself"
             />
-            <p className="font-['Exposure[-10]:Regular',sans-serif] text-[#786237] text-xs text-right">
+            <p className="type-meta-plain text-[#786237] text-right">
               {bio.length}/160
             </p>
           </div>

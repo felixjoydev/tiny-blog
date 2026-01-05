@@ -104,13 +104,13 @@ export default function NavActions() {
 			<div className="flex items-center gap-2">
 				<a
 					href="/auth?mode=login"
-					className="bg-[#3f331c] text-white px-4 py-2.5 rounded-full text-[16px] font-['Exposure[-40]:Regular',sans-serif] tracking-[0.48px] hover:bg-[#2f2715] transition-colors"
+					className="bg-[#3f331c] text-white px-4 py-2.5 rounded-full type-label hover:bg-[#2f2715] transition-colors"
 				>
 					Login
 				</a>
 				<a
 					href="/auth?mode=signup"
-					className="bg-[#da5700] text-white px-4 py-2.5 rounded-full text-[16px] font-['Exposure[-40]:Regular',sans-serif] tracking-[0.48px] hover:bg-[#c24e00] transition-colors"
+					className="bg-[#da5700] text-white px-4 py-2.5 rounded-full type-label hover:bg-[#c24e00] transition-colors"
 				>
 					Signup
 				</a>
@@ -135,7 +135,7 @@ export default function NavActions() {
 		// Fallback: first letter of display name
 		const firstLetter = profile?.display_name?.charAt(0).toUpperCase() || 'U';
 		return (
-			<span className="text-white text-[18px] font-['Exposure[-40]:Regular',sans-serif]">
+			<span className="text-white type-body-lg">
 				{firstLetter}
 			</span>
 		);
@@ -145,7 +145,7 @@ export default function NavActions() {
 		<div className="flex items-center gap-2 relative">
 			<a
 				href="/write"
-				className="bg-[#da5700] text-white px-4 py-2.5 h-10 rounded-full text-[16px] font-['Exposure[-40]:Regular',sans-serif] tracking-[0.48px] hover:bg-[#c24e00] transition-colors flex items-center gap-2.5"
+				className="bg-[#da5700] text-white px-4 py-2.5 h-10 rounded-full type-label hover:bg-[#c24e00] transition-colors flex items-center gap-2.5"
 			>
 				<img src={writeIcon.src} alt="" className="w-4 h-4" />
 				Write a post
@@ -168,7 +168,7 @@ export default function NavActions() {
 					{profile?.handle && (
 						<a
 							href={`/u/${profile.handle}`}
-							className="block px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors font-['Exposure[-40]:Regular',sans-serif] rounded"
+							className="block px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors type-label rounded"
 						>
 							View Profile
 						</a>
@@ -182,13 +182,13 @@ export default function NavActions() {
 							sessionStorage.setItem('settings_referrer', window.location.pathname);
 							window.location.href = '/accounts';
 						}}
-						className="block px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors font-['Exposure[-40]:Regular',sans-serif] rounded"
+						className="block px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors type-label rounded"
 					>
 						Settings
 					</a>
 					<button
 						onClick={handleLogout}
-						className="w-full text-left px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors font-['Exposure[-40]:Regular',sans-serif] rounded"
+						className="w-full text-left px-4 py-2 text-[#3f331c] hover:bg-[#FAECD2] transition-colors type-label rounded"
 					>
 						Logout
 					</button>

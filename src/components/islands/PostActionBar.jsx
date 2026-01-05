@@ -137,7 +137,7 @@ export default function PostActionBar({
 
     const firstLetter = profile?.display_name?.charAt(0).toUpperCase() || 'U';
     return (
-      <span className="text-white text-[18px] font-['Exposure[-40]:Regular',sans-serif]">
+      <span className="text-white type-body-lg">
         {firstLetter}
       </span>
     );
@@ -188,7 +188,7 @@ export default function PostActionBar({
                 fill="#3f331c"
               />
             </svg>
-            <span className="font-['Exposure[-20]:Regular',sans-serif] text-[#3f331c] text-[16px] tracking-[0.48px]">
+            <span className="type-label text-[#3f331c]">
               Close
             </span>
           </button>
@@ -200,7 +200,7 @@ export default function PostActionBar({
             <div className="flex items-center gap-2 relative">
               <a
                 href="/write"
-                className="bg-[#da5700] text-white px-4 py-2.5 h-10 rounded-full text-[16px] font-['Exposure[-40]:Regular',sans-serif] tracking-[0.48px] hover:bg-[#c24e00] transition-colors flex items-center gap-2.5"
+                className="bg-[#da5700] text-white px-4 py-2.5 h-10 rounded-full type-label hover:bg-[#c24e00] transition-colors flex items-center gap-2.5"
               >
                 <img src={writeIcon.src} alt="" className="w-4 h-4" />
                 Write a post
@@ -222,19 +222,19 @@ export default function PostActionBar({
                 >
                   <a
                     href={`/profile/${currentUserId}`}
-                    className="block px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors font-['Exposure[-40]:Regular',sans-serif]"
+                    className="block px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors type-label"
                   >
                     Profile
                   </a>
                   <a
                     href="/accounts"
-                    className="block px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors font-['Exposure[-40]:Regular',sans-serif]"
+                    className="block px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors type-label"
                   >
                     Settings
                   </a>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors font-['Exposure[-40]:Regular',sans-serif]"
+                    className="w-full text-left px-4 py-2 text-[#3f331c] hover:bg-[#FFFAEF] transition-colors type-label"
                   >
                     Logout
                   </button>
@@ -249,7 +249,7 @@ export default function PostActionBar({
               className="bg-[#da5700] flex gap-[10px] items-center justify-center px-4 py-[10px] rounded-[100px] hover:bg-[#c44f00] transition-colors"
             >
               <img src={writeIcon.src} alt="" className="w-4 h-4" />
-              <span className="font-['Exposure[-40]:Regular',sans-serif] text-white text-[16px] tracking-[0.48px]">
+              <span className="type-label text-white">
                 Publish
               </span>
             </button>
@@ -271,7 +271,7 @@ export default function PostActionBar({
                     fill="white"
                   />
                 </svg>
-                <span className="font-['Exposure[-40]:Regular',sans-serif] text-white text-[16px] tracking-[0.48px]">
+                <span className="type-label text-white">
                   Edit
                 </span>
               </button>
@@ -292,7 +292,7 @@ export default function PostActionBar({
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span className="font-['Exposure[-40]:Regular',sans-serif] text-white text-[16px] tracking-[0.48px]">
+                <span className="type-label text-white">
                   Delete
                 </span>
               </button>
@@ -305,7 +305,7 @@ export default function PostActionBar({
                 className="bg-[#da5700] flex gap-[10px] items-center justify-center px-4 py-[10px] rounded-[100px] hover:bg-[#c44f00] transition-colors"
               >
                 <img src={writeIcon.src} alt="" className="w-4 h-4" />
-                <span className="font-['Exposure[-40]:Regular',sans-serif] text-white text-[16px] tracking-[0.48px]">
+                <span className="type-label text-white">
                   Publish
                 </span>
               </button>

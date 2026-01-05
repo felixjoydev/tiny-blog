@@ -158,14 +158,14 @@ export default function AuthForm() {
 						<img src={logo.src} alt="Tiny Logo" className="w-full h-full" />
 					</div>
 					<div className="flex flex-col gap-[3px] items-center w-full">
-						<p className="font-['Exposure[-40]:Regular',sans-serif] leading-normal text-[#3f331c] text-[20px] text-center tracking-[0.6px] w-full">
-							{mode === 'login' ? 'Log in to Tiny' : 'Sign up to Tiny'}
-						</p>
-						<p className="font-['Exposure[-10]:Regular',sans-serif] leading-[24px] text-[#786237] text-[16px] tracking-[0.32px] text-center">
-							Simple beautiful blogs
-						</p>
-					</div>
+					<p className="type-body-lg text-[#3f331c] text-center w-full">
+						{mode === 'login' ? 'Log in to Tiny' : 'Sign up to Tiny'}
+					</p>
+					<p className="type-body text-[#786237] text-center">
+						Simple beautiful blogs
+					</p>
 				</div>
+			</div>
 
 				{/* Input Fields */}
 				<div className="flex flex-col gap-3 w-full">
@@ -176,7 +176,7 @@ export default function AuthForm() {
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						disabled={loading}
-						className={`bg-[#f4edde] h-10 px-2.5 py-2.5 rounded-lg w-full font-['Exposure[-10]:Regular',sans-serif] text-[14px] border-none outline-none ${
+						className={`bg-[#f4edde] h-10 px-2.5 py-2.5 rounded-lg w-full type-label-plain border-none outline-none ${
 							email ? 'text-[#3f331c]' : 'text-[#3f331c] opacity-50 placeholder:text-[#3f331c] placeholder:opacity-50'
 						}`}
 					/>
@@ -188,7 +188,7 @@ export default function AuthForm() {
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						disabled={loading}
-						className={`bg-[#f4edde] h-10 px-2.5 py-2.5 rounded-lg w-full font-['Exposure[-10]:Regular',sans-serif] text-[14px] border-none outline-none ${
+						className={`bg-[#f4edde] h-10 px-2.5 py-2.5 rounded-lg w-full type-label-plain border-none outline-none ${
 							password ? 'text-[#3f331c]' : 'text-[#3f331c] opacity-50 placeholder:text-[#3f331c] placeholder:opacity-50'
 						}`}
 					/>
@@ -201,7 +201,7 @@ export default function AuthForm() {
 							value={confirmPassword}
 							onChange={(e) => setConfirmPassword(e.target.value)}
 							disabled={loading}
-							className={`bg-[#f4edde] h-10 px-2.5 py-2.5 rounded-lg w-full font-['Exposure[-10]:Regular',sans-serif] text-[14px] border-none outline-none ${
+							className={`bg-[#f4edde] h-10 px-2.5 py-2.5 rounded-lg w-full type-label-plain border-none outline-none ${
 								confirmPassword
 									? 'text-[#3f331c]'
 									: 'text-[#3f331c] opacity-50 placeholder:text-[#3f331c] placeholder:opacity-50'
@@ -212,7 +212,7 @@ export default function AuthForm() {
 
 				{/* Error Message */}
 				{error && (
-					<p className="text-[#B42018] text-center font-['Exposure[-10]:Regular',sans-serif] text-[0.75rem] w-full">
+					<p className="text-[#B42018] text-center type-meta-plain w-full">
 						{error}
 					</p>
 				)}
@@ -225,20 +225,20 @@ export default function AuthForm() {
 						loading || !isFormValid() ? 'opacity-50 cursor-not-allowed' : 'opacity-100 hover:bg-[#c24e00]'
 					}`}
 				>
-					<span className="font-['Exposure[-40]:Regular',sans-serif] leading-normal text-[16px] text-white tracking-[0.48px]">
+					<span className="type-label text-white">
 						{loading ? (mode === 'login' ? 'Logging in...' : 'Signing up...') : mode === 'login' ? 'Login' : 'Sign up'}
 					</span>
 				</button>
 
 				{/* Mode Toggle */}
-				<p className="font-['Exposure[-10]:Regular',sans-serif] leading-normal text-[#786237] text-[12px] text-center w-full">
+				<p className="type-meta-plain text-[#786237] text-center w-full">
 					{mode === 'login' ? (
 						<>
 							Don't have an account?{' '}
 							<button
 								type="button"
 								onClick={toggleMode}
-								className="font-['Exposure[-40]:Regular',sans-serif] text-[#da5700] hover:underline"
+								className="type-meta-strong text-[#da5700] hover:underline"
 							>
 								Sign up
 							</button>
@@ -249,7 +249,7 @@ export default function AuthForm() {
 							<button
 								type="button"
 								onClick={toggleMode}
-								className="font-['Exposure[-40]:Regular',sans-serif] text-[#da5700] hover:underline"
+								className="type-meta-strong text-[#da5700] hover:underline"
 							>
 								Log in
 							</button>
