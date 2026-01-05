@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { normalizeHandle, getHandleError, RESERVED_HANDLES } from '../../lib/urls';
+import Button from '../ui/Button';
 import logo from '../../assets/icons/tiny-logo.svg';
 import scanUserIcon from '../../assets/icons/scan-user.svg';
 import avatarCloseIcon from '../../assets/icons/avatar-close.svg';
@@ -293,12 +294,12 @@ export default function AccountSetup({ profile, userId }) {
 		<div className="flex flex-col gap-4 items-center w-full max-w-[360px]">
 			<form onSubmit={handleSubmit} className="flex flex-col gap-4 items-center w-full">
 				{/* Header */}
-				<div className="flex flex-col gap-[15px] items-center w-[176px]">
+				<div className="flex flex-col gap-[15px] items-center">
 					<div className="h-[54.688px] w-[50px]">
 						<img src={logo.src} alt="Tiny Logo" className="w-full h-full" />
 					</div>
-					<div className="flex flex-col gap-[3px] items-center w-full">
-						<p className="type-body-lg text-[#3f331c] text-center w-full">
+					<div className="flex flex-col gap-[3px] items-center">
+						<p className="type-h3 text-[#3f331c] text-center">
 							Welcome to Tiny
 						</p>
 						<p className="type-body text-[#786237] text-center">
@@ -308,7 +309,7 @@ export default function AccountSetup({ profile, userId }) {
 				</div>
 
 				{/* Avatar Section */}
-				<div className="flex flex-col gap-3 items-center w-[132px]">
+				<div className="flex flex-col gap-3 items-center">
 					{getAvatarDisplay()}
 
 					<input
@@ -321,9 +322,10 @@ export default function AccountSetup({ profile, userId }) {
 					/>
 					<label
 						htmlFor="avatar-upload"
-						className="bg-[#3f331c] flex items-center justify-center px-2 py-2 rounded-full w-full cursor-pointer hover:bg-[#2f2715] transition-colors"
+						className="bg-[#3f331c] flex items-center justify-center py-2.5 rounded-full cursor-pointer hover:bg-[#2f2715] transition-colors"
+						style={{ paddingInline: 'calc(var(--spacing) * 3)' }}
 					>
-						<span className="type-meta-strong text-white">
+						<span className="type-meta-strong text-white whitespace-nowrap">
 							Upload your avatar
 						</span>
 					</label>
@@ -401,17 +403,15 @@ export default function AccountSetup({ profile, userId }) {
 				)}
 
 				{/* Submit Button */}
-				<button
+				<Button
 					type="submit"
+					variant="primary"
 					disabled={uploading || !isFormValid()}
-					className={`bg-[#da5700] flex items-center justify-center px-4 py-2.5 rounded-full w-full transition-opacity ${
-						uploading || !isFormValid() ? 'opacity-50 cursor-not-allowed' : 'opacity-100 hover:bg-[#c24e00]'
-					}`}
+					loading={uploading}
+					className="w-full"
 				>
-					<span className="type-label text-white">
-						{uploading ? 'Setting up...' : 'Get started'}
-					</span>
-				</button>
+					Get started
+				</Button>
 			</form>
 		</div>
 	);

@@ -153,12 +153,12 @@ export default function AuthForm() {
 				className="flex flex-col gap-4 items-center w-full"
 			>
 				{/* Header */}
-				<div className="flex flex-col gap-[15px] items-center w-[176px]">
+				<div className="flex flex-col gap-[15px] items-center">
 					<div className="h-[54.688px] w-[50px]">
 						<img src={logo.src} alt="Tiny Logo" className="w-full h-full" />
 					</div>
-					<div className="flex flex-col gap-[3px] items-center w-full">
-					<p className="type-body-lg text-[#3f331c] text-center w-full">
+					<div className="flex flex-col gap-[3px] items-center">
+					<p className="type-h3 text-[#3f331c] text-center">
 						{mode === 'login' ? 'Log in to Tiny' : 'Sign up to Tiny'}
 					</p>
 					<p className="type-body text-[#786237] text-center">
