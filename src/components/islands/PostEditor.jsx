@@ -4,6 +4,8 @@ import { getSessionUser, getMyProfile } from "../../lib/auth";
 import { createPost, updatePostWithSlug, updatePostContent, deletePost, getPostById } from "../../lib/posts";
 import { generateUniqueSlug, generateSlug, checkSlugAvailability } from "../../lib/slugify";
 import PostActionBar from "./PostActionBar";
+import ConfirmCloseModal from "../ui/ConfirmCloseModal";
+import DeletePostModal from "../ui/DeletePostModal";
 
 /**
  * PostEditor - Interactive post creation/editing form
@@ -23,6 +25,17 @@ export default function PostEditor({ mode = "create", postId = null }) {
   const [slugPreview, setSlugPreview] = useState("");
   const [checkingSlug, setCheckingSlug] = useState(false);
   const [slugAvailable, setSlugAvailable] = useState(true);
+  
+  // Track original values for edit mode
+  const [originalTitle, setOriginalTitle] = useState("");
+  const [originalSubtitle, setOriginalSubtitle] = useState("");
+  const [originalContent, setOriginalContent] = useState("");
+  const [hasChanges, setHasChanges] = useState(false);
+  
+  // Modal states
+  const [showCloseModal, setShowCloseModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);
@@ -45,6 +58,17 @@ export default function PostEditor({ mode = "create", postId = null }) {
       }
     }
   }, [loading, title, subtitle]);
+
+  // Track changes in edit mode
+  useEffect(() => {
+    if (mode === "edit" && !loading) {
+      const changed = 
+        title !== originalTitle ||
+        subtitle !== originalSubtitle ||
+        content !== originalContent;
+      setHasChanges(changed);
+    }
+  }, [mode, loading, title, subtitle, content, originalTitle, originalSubtitle, originalContent]);
 
   // Debounced slug preview and availability check
   useEffect(() => {
@@ -109,6 +133,11 @@ export default function PostEditor({ mode = "create", postId = null }) {
         setTitle(post.title || "");
         setSubtitle(post.subtitle || "");
         setContent(post.content || "");
+        
+        // Store original values for change tracking
+        setOriginalTitle(post.title || "");
+        setOriginalSubtitle(post.subtitle || "");
+        setOriginalContent(post.content || "");
       }
 
       setLoading(false);
@@ -122,6 +151,22 @@ export default function PostEditor({ mode = "create", postId = null }) {
   };
 
   const handleClose = () => {
+    // Check for unsaved changes in edit mode
+    if (mode === "edit" && hasChanges) {
+      setShowCloseModal(true);
+      return;
+    }
+
+    // Proceed with close
+    if (mode === "edit" && postId) {
+      window.location.href = `/post/${postId}`;
+    } else {
+      window.location.href = "/";
+    }
+  };
+
+  const handleCloseConfirm = () => {
+    setShowCloseModal(false);
     if (mode === "edit" && postId) {
       window.location.href = `/post/${postId}`;
     } else {
@@ -190,11 +235,12 @@ export default function PostEditor({ mode = "create", postId = null }) {
     }
   };
 
-  const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
-      return;
-    }
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
 
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
     setSaving(true);
     setError(null);
 
@@ -202,14 +248,18 @@ export default function PostEditor({ mode = "create", postId = null }) {
       const { error: deleteError } = await deletePost(postId);
       if (deleteError) {
         setError("Failed to delete post");
+        setIsDeleting(false);
         setSaving(false);
+        setShowDeleteModal(false);
         return;
       }
       window.location.href = "/";
     } catch (err) {
       console.error("Delete error:", err);
       setError("An error occurred while deleting");
+      setIsDeleting(false);
       setSaving(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -245,6 +295,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
         onClose={handleClose}
         onPublish={handlePublish}
         onDelete={mode === "edit" ? handleDelete : undefined}
+        hasChanges={mode === "edit" ? hasChanges : true}
       />
       
       <div className="py-12">
@@ -303,6 +354,24 @@ export default function PostEditor({ mode = "create", postId = null }) {
           />
         </div>
       </div>
+
+      {/* Confirm Close Modal (unsaved changes) */}
+      <ConfirmCloseModal
+        isOpen={showCloseModal}
+        onClose={() => setShowCloseModal(false)}
+        onConfirm={handleCloseConfirm}
+      />
+
+      {/* Delete Post Modal */}
+      {mode === "edit" && (
+        <DeletePostModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleDeleteConfirm}
+          postTitle={title}
+          isDeleting={isDeleting}
+        />
+      )}
     </>
   );
 }

@@ -74,6 +74,7 @@ if (session?.data?.session?.user?.id === postData.author_id) {
         postId={id}
         userId={session.data.session.user.id}
         userHandle={userHandle}
+        postTitle={postData.title}
       />
     ) : (
       <PostActionBar client:load mode="view-only" />

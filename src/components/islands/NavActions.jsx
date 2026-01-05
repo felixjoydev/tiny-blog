@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import writeIcon from '../../assets/icons/write.svg';
+import Button from '../ui/Button.jsx';
 
 export default function NavActions() {
 	const [session, setSession] = useState(null);
@@ -102,18 +103,12 @@ export default function NavActions() {
 	if (!session) {
 		return (
 			<div className="flex items-center gap-2">
-				<a
-					href="/auth?mode=login"
-					className="bg-[#3f331c] text-white px-4 py-2.5 rounded-full type-label hover:bg-[#2f2715] transition-colors"
-				>
+				<Button variant="secondary" onClick={() => window.location.href = '/auth?mode=login'}>
 					Login
-				</a>
-				<a
-					href="/auth?mode=signup"
-					className="bg-[#da5700] text-white px-4 py-2.5 rounded-full type-label hover:bg-[#c24e00] transition-colors"
-				>
+				</Button>
+				<Button variant="primary" onClick={() => window.location.href = '/auth?mode=signup'}>
 					Signup
-				</a>
+				</Button>
 			</div>
 		);
 	}
@@ -143,13 +138,14 @@ export default function NavActions() {
 
 	return (
 		<div className="flex items-center gap-2 relative">
-			<a
-				href="/write"
-				className="bg-[#da5700] text-white px-4 py-2.5 h-10 rounded-full type-label hover:bg-[#c24e00] transition-colors flex items-center gap-2.5"
+			<Button 
+				variant="primary" 
+				onClick={() => window.location.href = '/write'}
+				icon={<img src={writeIcon.src} alt="" className="w-4 h-4" />}
+				className="h-10"
 			>
-				<img src={writeIcon.src} alt="" className="w-4 h-4" />
 				Write a post
-			</a>
+			</Button>
 
 			<button
 				ref={avatarRef}

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { getSessionUser } from "../../lib/auth";
+import Button from '../ui/Button.jsx';
+import NavBar from '../layout/NavBar.jsx';
 
 /**
  * AccountSettings - Profile settings page for authenticated users
@@ -202,40 +204,77 @@ export default function AccountSettings({ profileId, initialProfile }) {
 
   const avatarUrl = getAvatarUrl();
 
+  // Background layers for NavBar (blur effect matching NavActions)
+  const backgroundLayers = (
+    <>
+      {/* Blur layer with gradient mask */}
+      <div 
+        className="absolute inset-0 -z-10"
+        style={{ 
+          backdropFilter: 'blur(6.55px)', 
+          maskImage: 'linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)', 
+          WebkitMaskImage: 'linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)' 
+        }}
+      />
+      
+      {/* Background gradient */}
+      <div 
+        className="absolute inset-0 -z-10"
+        style={{ background: 'linear-gradient(180deg, rgba(255, 250, 239, 0.79) 0%, rgba(255, 250, 239, 0.00) 100%)' }}
+      />
+    </>
+  );
+
+  // Left content: Close button
+  const leftContent = (
+    <Button
+      variant="tertiary"
+      onClick={handleClose}
+      icon={
+        <svg 
+          className="w-4 h-4" 
+          viewBox="0 0 16 16" 
+          fill="none"
+        >
+          <path 
+            d="M2.34315 2.34315C2.73367 1.95262 3.36684 1.95262 3.75736 2.34315L8 6.58579L12.2426 2.34315C12.6332 1.95262 13.2663 1.95262 13.6569 2.34315C14.0474 2.73367 14.0474 3.36684 13.6569 3.75736L9.41421 8L13.6569 12.2426C14.0474 12.6332 14.0474 13.2663 13.6569 13.6569C13.2663 14.0474 12.6332 14.0474 12.2426 13.6569L8 9.41421L3.75736 13.6569C3.36684 14.0474 2.73367 14.0474 2.34315 13.6569C1.95262 13.2663 1.95262 12.6332 2.34315 12.2426L6.58579 8L2.34315 3.75736C1.95262 3.36684 1.95262 2.73367 2.34315 2.34315Z" 
+            fill="#3f331c"
+          />
+        </svg>
+      }
+    >
+      Close
+    </Button>
+  );
+
+  // Right content: Save button
+  const rightContent = (
+    <Button
+      variant="primary"
+      onClick={handleSave}
+      disabled={!hasChanges || saving}
+      loading={saving}
+    >
+      Save
+    </Button>
+  );
+
   return (
     <>
       {/* Custom Navigation Bar */}
-      <nav 
-        className="fixed top-0 left-0 right-0 bg-[#FFF1D5] border-b border-[rgba(63,51,28,0.1)] z-50"
-        style={{ height: 'var(--nav-height)' }}
-      >
-        <div className="max-w-125 mx-auto px-4 h-full flex items-center justify-between">
-          {/* Close Button */}
-          <button
-            onClick={handleClose}
-            className="text-[#3f331c] type-label hover:opacity-70 transition-opacity"
-          >
-            Close
-          </button>
-
-          {/* Save Button */}
-          <button
-            onClick={handleSave}
-            disabled={!hasChanges || saving}
-            className="bg-[#da5700] text-white px-6 py-2.5 rounded-full type-label hover:bg-[#c24e00] transition-all disabled:cursor-not-allowed"
-            style={{ opacity: hasChanges ? 1 : 0.5 }}
-          >
-            {saving ? 'Saving...' : 'Save'}
-          </button>
-        </div>
-      </nav>
+      <NavBar
+        leftContent={leftContent}
+        rightContent={rightContent}
+        backgroundLayers={backgroundLayers}
+        className="z-[100]"
+      />
 
       {/* Main Content */}
       <div 
         className="max-w-125 mx-auto px-4 py-12"
         style={{ paddingTop: 'calc(var(--nav-height) + 3rem)' }}
       >
-        <h1 className="type-display-2 text-[#3f331c] mb-8">
+        <h1 className="type-display-2 text-[#3f331c] mb-8 text-center">
           Account Settings
         </h1>
 
@@ -272,19 +311,19 @@ export default function AccountSettings({ profileId, initialProfile }) {
                 onChange={handleFileSelect}
                 className="hidden"
               />
-              <button
+              <Button
+                variant="secondary"
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-[#3f331c] text-white px-4 py-2 rounded-full type-label hover:bg-[#2f2715] transition-colors"
               >
                 Upload Avatar
-              </button>
+              </Button>
               {avatarUrl && (
-                <button
+                <Button
+                  variant="danger"
                   onClick={handleDeleteAvatar}
-                  className="bg-[#B42018] text-white px-4 py-2 rounded-full type-label hover:bg-[#9a1c13] transition-colors"
                 >
                   Delete
-                </button>
+                </Button>
               )}
             </div>
             <p className="type-meta-plain text-[#786237] text-center">

@@ -132,6 +132,7 @@ const authorProfileUrl = authorData?.handle
         postId={post.id}
         userId={session.user.id}
         userHandle={userHandle}
+        postTitle={post.title}
       />
     ) : (
       <PostActionBar client:load mode="view-only" />

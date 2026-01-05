@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { updateComment, deleteComment } from '../../lib/comments';
 import { supabase } from '../../lib/supabaseClient';
 import { getProfileUrl } from '../../lib/urls';
+import DeleteCommentModal from '../ui/DeleteCommentModal';
 
 /**
  * CommentItem component with edit/delete functionality
@@ -20,6 +21,8 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
   const [isSaving, setIsSaving] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef(null);
 
   const isAuthor = currentUserId === comment.author_id;
@@ -90,19 +93,27 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
     onCommentUpdated(data);
   };
 
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this comment?')) return;
+  const handleDelete = () => {
+    setShowMenu(false);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
 
     const { data, error } = await deleteComment(comment.id);
 
     if (error) {
       console.error('Error deleting comment:', error);
       alert(`Failed to delete comment: ${error.message}`);
+      setIsDeleting(false);
+      setShowDeleteModal(false);
       return;
     }
 
     // Check if delete actually succeeded (RLS might block it)
     console.log('Delete response:', { data, error });
+    setShowDeleteModal(false);
     onCommentDeleted(comment.id);
   };
 
@@ -246,6 +257,14 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
           </div>
         )}
       </div>
+
+      {/* Delete Comment Modal */}
+      <DeleteCommentModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

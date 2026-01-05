@@ -1,5 +1,5 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import AccountLayout from "../../layouts/AccountLayout.astro";
 import { createSupabaseServerClient } from "../../lib/supabaseServer";
 import AccountSettings from "../../components/islands/AccountSettings";
 
@@ -34,7 +34,7 @@ if (!profile.onboarded) {
 }
 ---
 
-<Layout title="Account Settings - Tiny Blog">
+<AccountLayout title="Account Settings - Tiny Blog">
   <AccountSettings
     client:load
     profileId={profile.id}
@@ -45,4 +45,4 @@ if (!profile.onboarded) {
       avatar_path: profile.avatar_path,
     }}
   />
-</Layout>
+</AccountLayout>
