@@ -289,7 +289,7 @@ export default function AccountSettings({ profileId, initialProfile }) {
         <div className="space-y-8">
           {/* Avatar Upload */}
           <div className="flex flex-col items-center gap-4">
-            <div className="w-40 h-40 rounded-full bg-[#f4edde] flex items-center justify-center overflow-hidden">
+            <div className="w-24 h-24 rounded-full bg-[#3F331C] flex items-center justify-center overflow-hidden border-2 border-[rgba(63,51,28,0.1)]">
               {avatarUrl ? (
                 <img
                   src={avatarUrl}
@@ -297,7 +297,7 @@ export default function AccountSettings({ profileId, initialProfile }) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-[#786237] type-display-1">
+                <span className="text-[#FFFAEF] type-display-1">
                   {displayName.charAt(0).toUpperCase() || 'U'}
                 </span>
               )}

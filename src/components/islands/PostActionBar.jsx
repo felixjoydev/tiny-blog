@@ -18,6 +18,7 @@ import NavBar from '../layout/NavBar.jsx';
  * @param {boolean} [props.hasChanges] - Whether content has changed (for edit mode)
  * @param {string} [props.authorFirstName] - Author's first name (for view-only/logged-out modes)
  * @param {string} [props.authorHandle] - Author's handle (for view-only/logged-out modes back button)
+ * @param {string} [props.userHandle] - Current user's handle (for view-own-post mode)
  */
 export default function PostActionBar({ 
   mode = "create",
@@ -28,7 +29,8 @@ export default function PostActionBar({
   onDelete,
   hasChanges = true,
   authorFirstName = 'Profile',
-  authorHandle = null
+  authorHandle = null,
+  userHandle = null
 }) {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -191,13 +193,66 @@ export default function PostActionBar({
         onClick={() => {
           const referrer = document.referrer;
           const isFromAuth = referrer.includes('/auth');
+          const isFromSetup = referrer.includes('/accounts/setup');
+          const isFromEdit = referrer.includes('/write');
           
-          if (isFromAuth && authorHandle) {
-            // If coming from auth page, go directly to profile
-            window.location.href = `/u/${authorHandle}`;
-          } else {
-            // Otherwise use history.back() to preserve scroll position
+          // Always skip auth/setup/edit pages
+          if (isFromAuth || isFromSetup) {
+            if (mode === "view-own-post" && userHandle) {
+              window.location.href = `/u/${userHandle}`;
+            } else if (authorHandle) {
+              window.location.href = `/u/${authorHandle}`;
+            } else {
+              window.history.back();
+            }
+            return;
+          }
+          
+          if (mode === "view-own-post" && isFromEdit && userHandle) {
+            // If viewing own post and coming from edit page, go to profile
+            window.location.href = `/u/${userHandle}`;
+            return;
+          }
+          
+          // For view-own-post, use history.back() for normal navigation
+          if (mode === "view-own-post") {
             window.history.back();
+            return;
+          }
+          
+          // For view-only/logged-out: intelligent back navigation
+          // Check if referrer is a profile page
+          const profilePattern = /\/u\/([\w-]+)(?:\/)?$/;
+          const legacyProfilePattern = /\/profile\/([\w-]+)(?:\/)?$/;
+          
+          const profileMatch = referrer.match(profilePattern);
+          const legacyMatch = referrer.match(legacyProfilePattern);
+          
+          if (profileMatch) {
+            const referrerHandle = profileMatch[1];
+            // If came from same author's profile, use history.back to preserve scroll
+            if (referrerHandle === authorHandle) {
+              window.history.back();
+            } else {
+              // Different author, go to current post's author profile
+              window.location.href = `/u/${authorHandle}`;
+            }
+          } else if (legacyMatch || !referrer) {
+            // Came from legacy profile, no referrer, or other source
+            // Navigate to author's profile
+            if (authorHandle) {
+              window.location.href = `/u/${authorHandle}`;
+            } else {
+              window.history.back();
+            }
+          } else {
+            // Came from somewhere else (home, another post, etc.)
+            // Navigate to author's profile
+            if (authorHandle) {
+              window.location.href = `/u/${authorHandle}`;
+            } else {
+              window.history.back();
+            }
           }
         }}
         icon={<img src={backIcon.src} alt="" className="w-4 h-4" />}

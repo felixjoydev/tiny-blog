@@ -52,6 +52,7 @@ export default function PostDetail({ postId, userId, userHandle, postTitle }) {
         mode="view-own-post" 
         postId={postId}
         onDelete={handleDeleteClick}
+        userHandle={userHandle}
       />
       
       <DeletePostModal

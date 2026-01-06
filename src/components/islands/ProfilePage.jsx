@@ -82,8 +82,8 @@ export default function ProfilePage({ profileId, initialProfile }) {
             className="w-24 h-24 rounded-full object-cover border-2 border-[rgba(63,51,28,0.1)]"
           />
         ) : (
-          <div className="w-24 h-24 rounded-full bg-[#f4edde] flex items-center justify-center border-2 border-[rgba(63,51,28,0.1)]">
-            <span className="type-display-1 text-[#3f331c]">
+          <div className="w-24 h-24 rounded-full bg-[#3F331C] flex items-center justify-center border-2 border-[rgba(63,51,28,0.1)]">
+            <span className="type-display-1 text-[#FFFAEF]">
               {profile?.display_name?.[0]?.toUpperCase() || "?"}
             </span>
           </div>
@@ -94,6 +94,11 @@ export default function ProfilePage({ profileId, initialProfile }) {
           <h1 className="type-display-2 text-[#3f331c] mb-2">
             {profile?.display_name || "User"}
           </h1>
+          {profile?.handle && (
+            <p className="type-body-tracked text-[#3F331C] mb-2">
+              @{profile.handle}
+            </p>
+          )}
           {profile?.bio && (
             <p className="type-body text-[#786237] max-w-md">
               {profile.bio}

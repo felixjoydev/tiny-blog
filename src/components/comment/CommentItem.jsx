@@ -125,15 +125,19 @@ export default function CommentItem({ comment, postAuthorId, currentUserId, onCo
           <div className="flex gap-2 items-center">
             {/* Avatar */}
             <div 
-              className="w-8 h-8 rounded-full bg-[#D9D9D9] overflow-hidden shrink-0"
+              className="w-8 h-8 rounded-full bg-[#3f331c] overflow-hidden shrink-0 flex items-center justify-center"
               aria-hidden="true"
             >
-              {avatarUrl && (
+              {avatarUrl ? (
                 <img 
                   src={avatarUrl} 
                   alt="" 
                   className="w-full h-full object-cover"
                 />
+              ) : (
+                <span className="text-white type-meta-plain">
+                  {comment.profiles?.display_name?.charAt(0).toUpperCase() || 'U'}
+                </span>
               )}
             </div>
 
