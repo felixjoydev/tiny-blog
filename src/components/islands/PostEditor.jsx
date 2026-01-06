@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
 import { supabase } from "../../lib/supabaseClient";
 import { getSessionUser, getMyProfile } from "../../lib/auth";
 import { createPost, updatePostWithSlug, updatePostContent, deletePost, getPostById } from "../../lib/posts";
 import { generateUniqueSlug, generateSlug, checkSlugAvailability } from "../../lib/slugify";
 import PostActionBar from "./PostActionBar";
+import EditorToolbar from "../ui/EditorToolbar";
 import ConfirmCloseModal from "../ui/ConfirmCloseModal";
 import DeletePostModal from "../ui/DeletePostModal";
 
@@ -39,7 +43,42 @@ export default function PostEditor({ mode = "create", postId = null }) {
   
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);
-  const contentRef = useRef(null);
+
+  // Initialize Tiptap editor
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
+      Placeholder.configure({
+        placeholder: 'Start writing your post...',
+        emptyEditorClass: 'is-editor-empty',
+      }),
+    ],
+    content: '',
+    editable: !saving,
+    immediatelyRender: false, // Prevent SSR hydration issues
+    editorProps: {
+      attributes: {
+        class: 'w-full bg-transparent border-none outline-none type-body-lg text-[#3f331c] prose prose-lg max-w-none focus:outline-none',
+        style: 'min-height: 300px;',
+      },
+    },
+    onUpdate: ({ editor }) => {
+      // Get HTML content from editor
+      const html = editor.getHTML();
+      setContent(html);
+    },
+  });
+
+  // Update editor editable state when saving changes
+  useEffect(() => {
+    if (editor) {
+      editor.setEditable(!saving);
+    }
+  }, [saving, editor]);
 
   useEffect(() => {
     checkAuthAndLoadPost();
@@ -58,6 +97,13 @@ export default function PostEditor({ mode = "create", postId = null }) {
       }
     }
   }, [loading, title, subtitle]);
+
+  // Load content into Tiptap editor when post loads
+  useEffect(() => {
+    if (!loading && editor && content) {
+      editor.commands.setContent(content);
+    }
+  }, [loading, editor]);
 
   // Track changes in edit mode
   useEffect(() => {
@@ -175,12 +221,15 @@ export default function PostEditor({ mode = "create", postId = null }) {
   };
 
   const handlePublish = async () => {
+    // Get current content from Tiptap editor
+    const currentContent = editor ? editor.getHTML() : '';
+    
     if (!title.trim()) {
       setError("Title is required");
       return;
     }
 
-    if (!content.trim()) {
+    if (!currentContent.trim() || currentContent === '<p></p>') {
       setError("Content is required");
       return;
     }
@@ -202,7 +251,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
         }
 
         // 2. Update subtitle and content separately (do NOT update title again)
-        const { error: contentUpdateError } = await updatePostContent(postId, subtitle, content);
+        const { error: contentUpdateError } = await updatePostContent(postId, subtitle, currentContent);
         if (contentUpdateError) {
           console.error("Content update error:", contentUpdateError);
           setError("Failed to update post content");
@@ -215,7 +264,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
       } else {
         // Create new post with unique slug
         const uniqueSlug = await generateUniqueSlug(userId, title);
-        const { data, error: createError } = await createPost(title, subtitle, content, userId, uniqueSlug);
+        const { data, error: createError } = await createPost(title, subtitle, currentContent, userId, uniqueSlug);
         if (createError) {
           setError("Failed to create post");
           setSaving(false);
@@ -266,7 +315,9 @@ export default function PostEditor({ mode = "create", postId = null }) {
   const handleKeyDown = (e, nextField) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (nextField && nextField.current) {
+      if (nextField === 'editor' && editor) {
+        editor.commands.focus();
+      } else if (nextField && nextField.current) {
         nextField.current.focus();
       }
     }
@@ -330,7 +381,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
             ref={subtitleRef}
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
-            onKeyDown={(e) => handleKeyDown(e, contentRef)}
+            onKeyDown={(e) => handleKeyDown(e, 'editor')}
             placeholder="Subtitle"
             disabled={saving}
             rows={1}
@@ -342,16 +393,10 @@ export default function PostEditor({ mode = "create", postId = null }) {
             }}
           />
 
-          {/* Content Input */}
-          <textarea
-            ref={contentRef}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Start writing or type / for commands"
-            disabled={saving}
-            rows={15}
-            className="w-full bg-transparent border-none outline-none type-body-lg text-[#3f331c] placeholder:text-[#d4c7a8] resize-none"
-          />
+          {/* Rich Text Editor */}
+          <div className="tiptap-editor">
+            <EditorContent editor={editor} />
+          </div>
         </div>
       </div>
 

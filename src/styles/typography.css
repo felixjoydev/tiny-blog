@@ -69,7 +69,7 @@
     line-height: 1rem;
     letter-spacing: 0.0666667em;
   }
-  
+
    .type-body-lg-tight { /* 18 / Exposure 20 / 0.4px / lh 22 */
     font-family: 'Exposure[-20]:Regular', sans-serif;
     font-size: 1.125rem;
@@ -96,7 +96,7 @@
     font-family: 'Exposure[-20]:Regular', sans-serif;
     font-size: 1rem;              /* 16px */
     line-height: 1.5rem;          /* 24px */
-    letter-spacing: 0.05em;       /* 0.8 / 16 */
+    letter-spacing: 0.02em;       /* 0.8 / 16 */
   }
 
 }

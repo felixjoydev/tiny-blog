@@ -36,8 +36,10 @@ export default function PostCard({
 
   // Truncate content to 24 words
   const truncateContent = (text) => {
-    const words = text.split(' ');
-    if (words.length <= 24) return text;
+    // Strip HTML tags for preview
+    const plainText = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    const words = plainText.split(' ');
+    if (words.length <= 24) return plainText;
     return words.slice(0, 24).join(' ') + '...';
   };
 

@@ -134,11 +134,10 @@ if (session?.data?.session?.user?.id === postData.author_id) {
       </a>
 
       {/* Content */}
-      <div class="prose prose-lg max-w-none">
-        <p class="type-body-lg text-[#3f331c] whitespace-pre-wrap break-words">
-          {postData.content}
-        </p>
-      </div>
+      <div
+        class="prose prose-lg max-w-none tiptap-content"
+        set:html={postData.content}
+      />
     </article>
 
     {/* Comments section with 48px spacing */}
