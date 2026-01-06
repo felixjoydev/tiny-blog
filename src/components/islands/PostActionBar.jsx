@@ -2,19 +2,21 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import tinyLogo from "../../assets/icons/tiny-logo.svg";
 import writeIcon from "../../assets/icons/write.svg";
+import backIcon from "../../assets/icons/back.svg";
 import Button from '../ui/Button.jsx';
 import NavBar from '../layout/NavBar.jsx';
 
 /**
  * PostActionBar - Navigation bar for post creation/editing
  * @param {Object} props
- * @param {"create" | "view-own-post" | "edit" | "view-only"} props.mode - Display mode
+ * @param {"create" | "view-own-post" | "edit" | "view-only" | "logged-out"} props.mode - Display mode
  * @param {string} [props.postId] - Post ID (for view-own-post mode)
  * @param {Function} [props.onClose] - Close button callback
  * @param {Function} [props.onPublish] - Publish button callback
  * @param {Function} [props.onEdit] - Edit button callback
  * @param {Function} [props.onDelete] - Delete button callback
  * @param {boolean} [props.hasChanges] - Whether content has changed (for edit mode)
+ * @param {string} [props.authorFirstName] - Author's first name (for view-only/logged-out modes)
  */
 export default function PostActionBar({ 
   mode = "create",
@@ -23,7 +25,8 @@ export default function PostActionBar({
   onPublish,
   onEdit,
   onDelete,
-  hasChanges = true
+  hasChanges = true,
+  authorFirstName = 'Profile'
 }) {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -169,15 +172,24 @@ export default function PostActionBar({
     </>
   );
 
-  // Left content: Logo (view-only) or Close button (other modes)
-  const leftContent = mode === "view-only" ? (
-    <a
-      href="/"
-      className="hover:opacity-80 transition-opacity"
-      aria-label="Go to home"
-    >
-      <img src={tinyLogo.src} alt="Tiny" className="h-[55px] w-[50px]" />
-    </a>
+  // Left content: Logo (view-only or logged-out) or Close button (other modes)
+  const leftContent = (mode === "view-only" || mode === "logged-out") ? (
+    <div className="flex items-center gap-4">
+      <a
+        href="/"
+        className="hover:opacity-80 transition-opacity"
+        aria-label="Go to home"
+      >
+        <img src={tinyLogo.src} alt="Tiny" className="h-[55px] w-[50px]" />
+      </a>
+      <Button
+        variant="tertiary"
+        onClick={() => window.history.back()}
+        icon={<img src={backIcon.src} alt="" className="w-4 h-4" />}
+      >
+        {authorFirstName}
+      </Button>
+    </div>
   ) : (
     <Button
       variant="tertiary"
@@ -202,6 +214,17 @@ export default function PostActionBar({
   // Right content: Action buttons based on mode
   const rightContent = (
     <>
+      {mode === "logged-out" && (
+        <div className="flex items-center gap-2">
+          <Button variant="secondary" onClick={() => window.location.href = '/auth?mode=login'}>
+            Login
+          </Button>
+          <Button variant="primary" onClick={() => window.location.href = '/auth?mode=signup'}>
+            Signup
+          </Button>
+        </div>
+      )}
+
       {mode === "view-only" && (
         <div className="flex items-center gap-2 relative">
           <Button

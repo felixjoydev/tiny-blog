@@ -118,6 +118,9 @@ if (isOwner && session?.user) {
 // Ensure author is a single object (not array)
 const authorData = Array.isArray(post.author) ? post.author[0] : post.author;
 
+// Extract first name from display_name
+const authorFirstName = authorData?.display_name?.split(" ")[0] || "Profile";
+
 // Author profile URL
 const authorProfileUrl = authorData?.handle
   ? `/u/${authorData.handle}`
@@ -135,7 +138,11 @@ const authorProfileUrl = authorData?.handle
         postTitle={post.title}
       />
     ) : (
-      <PostActionBar client:load mode="view-only" />
+      <PostActionBar
+        client:load
+        mode={session?.user?.id ? "view-only" : "logged-out"}
+        authorFirstName={authorFirstName}
+      />
     )
   }
 
