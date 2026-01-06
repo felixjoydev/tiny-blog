@@ -23,19 +23,23 @@ export default function ProfilePage({ profileId, initialProfile }) {
   }, [profileId]);
 
   useEffect(() => {
-    // Restore scroll position if returning from post detail
-    const restoreScroll = sessionStorage.getItem('restoreScroll');
-    if (restoreScroll) {
-      const scrollY = parseInt(restoreScroll);
-      // Wait for content to load before scrolling
-      setTimeout(() => {
-        window.scrollTo(0, scrollY);
-        sessionStorage.removeItem('restoreScroll');
-        sessionStorage.removeItem('scrollPosition');
-        sessionStorage.removeItem('scrollTimestamp');
-      }, 100);
+    // Restore scroll position after posts have loaded
+    if (!loading) {
+      const restoreScroll = sessionStorage.getItem('restoreScroll');
+      if (restoreScroll) {
+        const scrollY = parseInt(restoreScroll);
+        // Use requestAnimationFrame to ensure DOM is fully rendered
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            window.scrollTo(0, scrollY);
+            sessionStorage.removeItem('restoreScroll');
+            sessionStorage.removeItem('scrollPosition');
+            sessionStorage.removeItem('scrollTimestamp');
+          }, 150);
+        });
+      }
     }
-  }, []);
+  }, [loading]);
 
   const loadProfileAndPosts = async () => {
     try {

@@ -214,9 +214,53 @@ export default function PostActionBar({
             return;
           }
           
-          // For view-own-post, use history.back() for normal navigation
+          // For view-own-post: intelligent back navigation
           if (mode === "view-own-post") {
-            window.history.back();
+            // Check if referrer is a profile page
+            const profilePattern = /\/u\/([\w-]+)(?:\/)?$/;
+            const legacyProfilePattern = /\/profile\/([\w-]+)(?:\/)?$/;
+            
+            const profileMatch = referrer.match(profilePattern);
+            const legacyMatch = referrer.match(legacyProfilePattern);
+            
+            if (profileMatch) {
+              const referrerHandle = profileMatch[1];
+              // If came from own profile, use history.back to preserve scroll
+              if (referrerHandle === userHandle) {
+                // Set restoreScroll flag from saved scrollPosition before going back
+                const scrollPosition = sessionStorage.getItem('scrollPosition');
+                const scrollTimestamp = sessionStorage.getItem('scrollTimestamp');
+                
+                if (scrollPosition && scrollTimestamp) {
+                  const timeDiff = Date.now() - parseInt(scrollTimestamp);
+                  // Only restore if scroll was saved within last 5 minutes
+                  if (timeDiff < 5 * 60 * 1000) {
+                    sessionStorage.setItem('restoreScroll', scrollPosition);
+                  }
+                }
+                
+                window.history.back();
+              } else {
+                // Different profile, navigate to own profile
+                window.location.href = `/u/${userHandle}`;
+              }
+            } else if (legacyMatch || !referrer) {
+              // Came from legacy profile, no referrer, or other source
+              // Navigate to own profile
+              if (userHandle) {
+                window.location.href = `/u/${userHandle}`;
+              } else {
+                window.history.back();
+              }
+            } else {
+              // Came from somewhere else (home, another post, etc.)
+              // Navigate to own profile
+              if (userHandle) {
+                window.location.href = `/u/${userHandle}`;
+              } else {
+                window.history.back();
+              }
+            }
             return;
           }
           
