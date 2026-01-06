@@ -161,7 +161,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
     if (mode === "edit" && postId) {
       window.location.href = `/post/${postId}`;
     } else {
-      window.location.href = "/";
+      window.history.back();
     }
   };
 
@@ -170,7 +170,7 @@ export default function PostEditor({ mode = "create", postId = null }) {
     if (mode === "edit" && postId) {
       window.location.href = `/post/${postId}`;
     } else {
-      window.location.href = "/";
+      window.history.back();
     }
   };
 

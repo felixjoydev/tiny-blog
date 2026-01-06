@@ -121,6 +121,9 @@ const authorData = Array.isArray(post.author) ? post.author[0] : post.author;
 // Extract first name from display_name
 const authorFirstName = authorData?.display_name?.split(" ")[0] || "Profile";
 
+// Author handle for back button
+const authorHandle = authorData?.handle || null;
+
 // Author profile URL
 const authorProfileUrl = authorData?.handle
   ? `/u/${authorData.handle}`
@@ -142,6 +145,7 @@ const authorProfileUrl = authorData?.handle
         client:load
         mode={session?.user?.id ? "view-only" : "logged-out"}
         authorFirstName={authorFirstName}
+        authorHandle={authorHandle}
       />
     )
   }

@@ -17,6 +17,7 @@ import NavBar from '../layout/NavBar.jsx';
  * @param {Function} [props.onDelete] - Delete button callback
  * @param {boolean} [props.hasChanges] - Whether content has changed (for edit mode)
  * @param {string} [props.authorFirstName] - Author's first name (for view-only/logged-out modes)
+ * @param {string} [props.authorHandle] - Author's handle (for view-only/logged-out modes back button)
  */
 export default function PostActionBar({ 
   mode = "create",
@@ -26,7 +27,8 @@ export default function PostActionBar({
   onEdit,
   onDelete,
   hasChanges = true,
-  authorFirstName = 'Profile'
+  authorFirstName = 'Profile',
+  authorHandle = null
 }) {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -172,22 +174,35 @@ export default function PostActionBar({
     </>
   );
 
-  // Left content: Logo (view-only or logged-out) or Close button (other modes)
-  const leftContent = (mode === "view-only" || mode === "logged-out") ? (
+  // Left content: Logo and Back button (view-only/logged-out/view-own-post) or Close button (other modes)
+  const leftContent = (mode === "view-only" || mode === "logged-out" || mode === "view-own-post") ? (
     <div className="flex items-center gap-4">
-      <a
-        href="/"
-        className="hover:opacity-80 transition-opacity"
-        aria-label="Go to home"
-      >
-        <img src={tinyLogo.src} alt="Tiny" className="h-[55px] w-[50px]" />
-      </a>
+      {(mode === "view-only" || mode === "logged-out") && (
+        <a
+          href="/"
+          className="hover:opacity-80 transition-opacity"
+          aria-label="Go to home"
+        >
+          <img src={tinyLogo.src} alt="Tiny" className="h-[55px] w-[50px]" />
+        </a>
+      )}
       <Button
         variant="tertiary"
-        onClick={() => window.history.back()}
+        onClick={() => {
+          const referrer = document.referrer;
+          const isFromAuth = referrer.includes('/auth');
+          
+          if (isFromAuth && authorHandle) {
+            // If coming from auth page, go directly to profile
+            window.location.href = `/u/${authorHandle}`;
+          } else {
+            // Otherwise use history.back() to preserve scroll position
+            window.history.back();
+          }
+        }}
         icon={<img src={backIcon.src} alt="" className="w-4 h-4" />}
       >
-        {authorFirstName}
+        {mode === "view-own-post" ? "Your profile" : authorFirstName}
       </Button>
     </div>
   ) : (
